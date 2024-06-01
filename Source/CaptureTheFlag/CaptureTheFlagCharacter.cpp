@@ -84,7 +84,7 @@ void ACaptureTheFlagCharacter::SetupPlayerInputComponent(UInputComponent* Player
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -94,6 +94,9 @@ void ACaptureTheFlagCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::Look);
+
+		// Sprinting
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::Sprint);
 	}
 	else
 	{
@@ -135,6 +138,26 @@ void ACaptureTheFlagCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void ACaptureTheFlagCharacter::Sprint(const FInputActionValue& Value)
+{
+	const bool bIsPressed = Value.Get<bool>();
+
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+
+	if (Movement != nullptr) {
+
+		if (bIsPressed) {
+			SprintToWalkRatio = MaxSprintSpeed / Movement->MaxWalkSpeed;
+			Movement->MaxWalkSpeed = MaxSprintSpeed;
+		}
+		else {
+			Movement->MaxWalkSpeed = MaxSprintSpeed / SprintToWalkRatio;
+		}
+
+	}
+
 }
 
 void ACaptureTheFlagCharacter::Jump()

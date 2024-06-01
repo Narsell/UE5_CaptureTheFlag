@@ -44,6 +44,10 @@ class ACaptureTheFlagCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Sprint Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
+
 
 public:
 	ACaptureTheFlagCharacter();
@@ -56,6 +60,9 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	/** Called for sprint input */
+	void Sprint(const FInputActionValue& Value);
 			
 	virtual void Jump() override;
 
@@ -73,6 +80,18 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 private: 
+
+	UPROPERTY(EditAnywhere, Category=Stats)
+	int32 LifePoints = 100;
+
+	UPROPERTY(EditAnywhere, Category = Stats)
+	int32 StaminaPoints = 100;
+
+	UPROPERTY(EditAnywhere, Category = Stats)
+	double MaxSprintSpeed = 600.f;
+
+	double SprintToWalkRatio = 1.f;
+
 	static TAutoConsoleVariable<int32> CVarCanJump;
 };
 

@@ -1,0 +1,2 @@
+# Capture the Flag
+A demo game made in Unreal Engine 5 in an effort to learn more advanced techniques in UE5, mainly about the UMG. However a simple gameplay will be developed to feed the UI and make it work.
