@@ -10,7 +10,9 @@ ATeamBase::ATeamBase()
 {
 	SetActorHiddenInGame(false);
 
-	GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &ATeamBase::OnFlagDrop);
+	GetCollisionComponent()->bHiddenInGame = true;
+	GetCollisionComponent()->SetCollisionObjectType(ECC_Base);
+	GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &ATeamBase::OnFlagEntered);
 }
 
 void ATeamBase::BeginPlay()
@@ -19,6 +21,7 @@ void ATeamBase::BeginPlay()
 
 }
 
-void ATeamBase::OnFlagDrop(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ATeamBase::OnFlagEntered(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("POINT TO TEAM [PLACEHOLDER]"))
 }

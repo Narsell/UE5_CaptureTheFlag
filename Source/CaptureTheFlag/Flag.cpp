@@ -19,6 +19,8 @@ AFlag::AFlag()
 
 	SetActorHiddenInGame(false);
 
+	GetCollisionComponent()->bHiddenInGame = true;
+	GetCollisionComponent()->SetCollisionObjectType(ECC_Flag);
 	GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &AFlag::OnGrabbed);
 }
 

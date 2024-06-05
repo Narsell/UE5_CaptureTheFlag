@@ -6,6 +6,8 @@
 #include "Engine/TriggerBox.h"
 #include "Flag.generated.h"
 
+#define ECC_Flag ECollisionChannel::ECC_GameTraceChannel1
+
 /**
  * 
  */
