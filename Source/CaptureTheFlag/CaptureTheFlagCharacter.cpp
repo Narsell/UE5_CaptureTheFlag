@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Flag.h"
 
 TAutoConsoleVariable<int32> ACaptureTheFlagCharacter::CVarCanJump(
 	TEXT("r.CanJump"),
@@ -24,41 +25,34 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 // ACaptureTheFlagCharacter
 
 ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
+	:MovementComponent(GetCharacterMovement())
 {
-	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
-	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	MovementComponent->bOrientRotationToMovement = true;	
+	MovementComponent->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
+	MovementComponent->JumpZVelocity = 700.f;
+	MovementComponent->AirControl = 0.35f;
+	MovementComponent->MaxWalkSpeed = 500.f;
+	MovementComponent->MinAnalogWalkSpeed = 20.f;
+	MovementComponent->BrakingDecelerationWalking = 2000.f;
+	MovementComponent->BrakingDecelerationFalling = 1500.0f;
 
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
-	GetCharacterMovement()->JumpZVelocity = 700.f;
-	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
-	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
-	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
-
-	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
-	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	FlagSocket = CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"));
+	FlagSocket->SetupAttachment(RootComponent);
 
 }
 
@@ -75,6 +69,42 @@ void ACaptureTheFlagCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	MaxRunningSpeed = MovementComponent->MaxWalkSpeed;
+}
+
+void ACaptureTheFlagCharacter::RegenerateStamina()
+{
+	StaminaPoints = FMath::Clamp(StaminaPoints + 10.f, 0.f, MaxStaminaPoints);
+}
+
+void ACaptureTheFlagCharacter::ConsumeStamina()
+{
+	StaminaPoints = FMath::Clamp(StaminaPoints - 20.f, 0.f, MaxStaminaPoints);
+}
+
+void ACaptureTheFlagCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	const float bHasStamina = StaminaPoints > 0.f;
+
+	if (bIsSprintInputPressed && bHasStamina) {
+		MovementComponent->MaxWalkSpeed = MaxSprintSpeed;
+	}
+	else {
+		MovementComponent->MaxWalkSpeed = MaxRunningSpeed;	
+	}
+
+	if (ActiveFlag) {
+		ActiveFlag->SetActorTransform(FlagSocket->GetComponentTransform());
+	}
+
+}
+
+void ACaptureTheFlagCharacter::GrabFlag(AFlag* Flag)
+{
+	ActiveFlag = Flag;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,7 +126,7 @@ void ACaptureTheFlagCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::Look);
 
 		// Sprinting
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::Sprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::SprintInput);
 	}
 	else
 	{
@@ -140,24 +170,30 @@ void ACaptureTheFlagCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void ACaptureTheFlagCharacter::Sprint(const FInputActionValue& Value)
+void ACaptureTheFlagCharacter::SprintInput(const FInputActionValue& Value)
 {
-	const bool bIsPressed = Value.Get<bool>();
+	bIsSprintInputPressed = Value.Get<bool>();
+	if (bIsSprintInputPressed) {
 
-	UCharacterMovementComponent* Movement = GetCharacterMovement();
-
-	if (Movement != nullptr) {
-
-		if (bIsPressed) {
-			SprintToWalkRatio = MaxSprintSpeed / Movement->MaxWalkSpeed;
-			Movement->MaxWalkSpeed = MaxSprintSpeed;
+		if (GetWorldTimerManager().IsTimerActive(StaminaRegenTimer)) {
+			GetWorldTimerManager().ClearTimer(StaminaRegenTimer);
 		}
-		else {
-			Movement->MaxWalkSpeed = MaxSprintSpeed / SprintToWalkRatio;
+
+		if (!GetWorldTimerManager().IsTimerActive(StaminaComsumptionTimer)) {
+			GetWorldTimerManager().SetTimer(StaminaComsumptionTimer, this, &ACaptureTheFlagCharacter::ConsumeStamina, StaminaConsumptionRate, true, 0.f);
+		}
+	}
+	else {
+
+		if (!GetWorldTimerManager().IsTimerActive(StaminaRegenTimer)) {
+			GetWorldTimerManager().SetTimer(StaminaRegenTimer, this, &ACaptureTheFlagCharacter::RegenerateStamina, StaminaRegenRate, true, 0.f);
+		}
+
+		if (GetWorldTimerManager().IsTimerActive(StaminaComsumptionTimer)) {
+			GetWorldTimerManager().ClearTimer(StaminaComsumptionTimer);
 		}
 
 	}
-
 }
 
 void ACaptureTheFlagCharacter::Jump()

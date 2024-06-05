@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class AFlag;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -19,6 +20,49 @@ UCLASS(config=Game)
 class ACaptureTheFlagCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
+	ACaptureTheFlagCharacter();
+	
+	virtual void Tick(float DeltaTime) override;
+
+	void GrabFlag(AFlag* Flag);
+
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+protected:
+
+	/** Called for movement input */
+	void Move(const FInputActionValue& Value);
+
+	/** Called for looking input */
+	void Look(const FInputActionValue& Value);
+
+	/** Called for sprint input */
+	void SprintInput(const FInputActionValue& Value);
+			
+	virtual void Jump() override;
+
+	// APawn interface
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	// To add mapping context
+	virtual void BeginPlay();
+
+
+private:
+
+	void RegenerateStamina();
+
+	void ConsumeStamina();
+
+private:
+
+	UPROPERTY(VisibleAnywhere, Category = Flag)
+	USceneComponent* FlagSocket;
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -44,53 +88,40 @@ class ACaptureTheFlagCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-	/** Sprint Input Action */
+	/** SprintInput Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
 
+	UPROPERTY(EditAnywhere, Category=Health)
+	float LifePoints = 100.f;
 
-public:
-	ACaptureTheFlagCharacter();
-	
+	UPROPERTY(EditAnywhere, Category = Stamina)
+	float MaxStaminaPoints = 200.f;
 
-protected:
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float MaxSprintSpeed = 600.f;
 
-	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
+	UPROPERTY(EditInstanceOnly, Category = Stamina)
+	float StaminaPoints = MaxStaminaPoints;
 
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
+	UPROPERTY(EditAnywhere, Category = Stamina)
+	float StaminaRegenRate = 2.0f;
 
-	/** Called for sprint input */
-	void Sprint(const FInputActionValue& Value);
-			
-	virtual void Jump() override;
+	UPROPERTY(EditAnywhere, Category = Stamina)
+	float StaminaConsumptionRate = 1.0f;
 
-protected:
-	// APawn interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	// To add mapping context
-	virtual void BeginPlay();
+	bool bIsSprintInputPressed = false;
 
-public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	AFlag* ActiveFlag = nullptr;
 
-private: 
+	FTimerHandle StaminaRegenTimer;
 
-	UPROPERTY(EditAnywhere, Category=Stats)
-	int32 LifePoints = 100;
+	FTimerHandle StaminaComsumptionTimer;
 
-	UPROPERTY(EditAnywhere, Category = Stats)
-	int32 StaminaPoints = 100;
+	// Defined by Movement Component
+	float MaxRunningSpeed;
 
-	UPROPERTY(EditAnywhere, Category = Stats)
-	double MaxSprintSpeed = 600.f;
-
-	double SprintToWalkRatio = 1.f;
+	UCharacterMovementComponent* MovementComponent;
 
 	static TAutoConsoleVariable<int32> CVarCanJump;
 };
