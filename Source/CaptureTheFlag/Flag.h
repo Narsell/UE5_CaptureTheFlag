@@ -11,7 +11,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class CAPTURETHEFLAG_API AFlag : public ATriggerBox
 {
 	GENERATED_BODY()
@@ -19,6 +19,9 @@ class CAPTURETHEFLAG_API AFlag : public ATriggerBox
 public:
 
 	AFlag();
+
+	UFUNCTION(BlueprintCallable)
+	ACaptureTheFlagCharacter* GetCarrier() const { return Carrier; };
 
 protected:
 
@@ -29,10 +32,16 @@ private:
 	UFUNCTION()
 	void OnGrabbed(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+private:
+
+	/** Pointer to flag carrier player. */
+	ACaptureTheFlagCharacter* Carrier;
+
 	UPROPERTY(EditAnywhere, Category=Mesh)
 	UStaticMeshComponent* PoleMesh;
 
 	UPROPERTY(EditAnywhere, Category=Mesh)
 	UStaticMeshComponent* FlagMesh;
+
 	
 };

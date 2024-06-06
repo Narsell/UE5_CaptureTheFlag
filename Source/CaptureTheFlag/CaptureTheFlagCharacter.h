@@ -27,6 +27,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void GrabFlag(AFlag* Flag);
+	void DropFlag();
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -92,37 +93,52 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
 
+	/** Current life points */
 	UPROPERTY(EditAnywhere, Category=Health)
 	float LifePoints = 100.f;
 
-	UPROPERTY(EditAnywhere, Category = Stamina)
-	float MaxStaminaPoints = 200.f;
-
-	UPROPERTY(EditAnywhere, Category = Movement)
-	float MaxSprintSpeed = 600.f;
-
+	/** Current stamina points */
 	UPROPERTY(EditInstanceOnly, Category = Stamina)
 	float StaminaPoints = MaxStaminaPoints;
 
+	/** Maximum stamina points the player can have */
+	UPROPERTY(EditAnywhere, Category = Stamina)
+	float MaxStaminaPoints = 200.f;
+
+	/** Stamina regeneration rate */
 	UPROPERTY(EditAnywhere, Category = Stamina)
 	float StaminaRegenRate = 2.0f;
 
+	/** Stamina consumption rate */
 	UPROPERTY(EditAnywhere, Category = Stamina)
 	float StaminaConsumptionRate = 1.0f;
 
+	/** Maximum speed the player can reach while sprinting */
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float MaxSprintSpeed = 600.f;
+
+	/** Determines if the player is pressing the sprint input */
 	bool bIsSprintInputPressed = false;
 
+	/** Pointer to a potential flag the player could carry */
 	AFlag* ActiveFlag = nullptr;
 
+	/** Timer Handle to stamina regeneration timer */
 	FTimerHandle StaminaRegenTimer;
 
+	/** Timer Handle to stamina consumption timer */
 	FTimerHandle StaminaComsumptionTimer;
 
-	// Defined by Movement Component
+	/** 
+	 * Maximum speed the player can reach while running
+	 * Set by the movement component in BeginPlay so no need to initialize.
+	 */
 	float MaxRunningSpeed;
 
+	/** Movement component pointer */
 	UCharacterMovementComponent* MovementComponent;
 
+	/** Console variable to enable/disable jumping */
 	static TAutoConsoleVariable<int32> CVarCanJump;
 };
 

@@ -25,7 +25,11 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 // ACaptureTheFlagCharacter
 
 ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
-	:MovementComponent(GetCharacterMovement())
+	:
+	MovementComponent(GetCharacterMovement()),
+	CameraBoom(CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"))),
+	FollowCamera(CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"))),
+	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket")))
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -42,18 +46,14 @@ ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	MovementComponent->BrakingDecelerationWalking = 2000.f;
 	MovementComponent->BrakingDecelerationFalling = 1500.0f;
 
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	FlagSocket = CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"));
 	FlagSocket->SetupAttachment(RootComponent);
-
 }
 
 void ACaptureTheFlagCharacter::BeginPlay()
@@ -104,7 +104,16 @@ void ACaptureTheFlagCharacter::Tick(float DeltaTime)
 
 void ACaptureTheFlagCharacter::GrabFlag(AFlag* Flag)
 {
+	ensure(!ActiveFlag);
+
 	ActiveFlag = Flag;
+}
+
+void ACaptureTheFlagCharacter::DropFlag()
+{
+	ensure(ActiveFlag);
+
+	ActiveFlag = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
