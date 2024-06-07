@@ -12,6 +12,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 class AFlag;
+class ACTFPlayerState;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -60,7 +61,12 @@ private:
 
 	void ConsumeStamina();
 
+	void TakeDamage();
+
 private:
+
+	/** Reference to player state instance */
+	ACTFPlayerState* PlayerState;
 
 	UPROPERTY(VisibleAnywhere, Category = Flag)
 	USceneComponent* FlagSocket;
@@ -92,10 +98,6 @@ private:
 	/** SprintInput Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
-
-	/** Current life points */
-	UPROPERTY(EditAnywhere, Category=Health)
-	float LifePoints = 100.f;
 
 	/** Current stamina points */
 	UPROPERTY(EditInstanceOnly, Category = Stamina)
@@ -140,5 +142,8 @@ private:
 
 	/** Console variable to enable/disable jumping */
 	static TAutoConsoleVariable<int32> CVarCanJump;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* DebugAction_1;
 };
 

@@ -12,6 +12,7 @@ ACTFGameMode::ACTFGameMode()
 
 void ACTFGameMode::BeginPlay()
 {
+	Super::BeginPlay();
 	GameState = Cast<ACTFGameState>(UGameplayStatics::GetGameState(this));
 }
 
@@ -21,6 +22,7 @@ void ACTFGameMode::OnTeamScored(const ETeamId& TeamId)
 
 	if (GameState) {
 		GameState->AddScoreToTeam(TeamId);
+		OnTeamScoreDelegate.ExecuteIfBound(TeamId);
 	}
 }
 

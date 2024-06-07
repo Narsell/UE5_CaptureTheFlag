@@ -7,6 +7,8 @@
 #include "GameFramework/GameMode.h"
 #include "CTFGameMode.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnTeamScoreSignature, const ETeamId& TeamId);
+
 /**
  * 
  */
@@ -19,6 +21,10 @@ public:
 
 	ACTFGameMode();
 
+	FOnTeamScoreSignature OnTeamScoreDelegate;
+
+	int32 GetRequiredScoreToWin() const { return ScoreToWin; };
+
 	/**
 	 * Registers a score by the team given by the TeamId.
 	 * This will also handle scenarios such as ties, wins, extra time, etc...
@@ -28,6 +34,9 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, Category=Rules)
+	int32 ScoreToWin = 3;
 
 private:
 

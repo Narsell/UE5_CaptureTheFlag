@@ -12,10 +12,10 @@ struct FTeam {
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FName Name = "Default Team";
+	FName Name = "Team X";
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int32 Points = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 Score = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FColor Color = FColor::Magenta;
@@ -57,12 +57,5 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Teams)
 	FTeam TeamB;
-
-private:
-
-	/**
-	 * Returns the information struct reference to the team that matches the given ID.
-	 */
-	FTeam& GetTeam(const ETeamId& TeamId);
 	
 };

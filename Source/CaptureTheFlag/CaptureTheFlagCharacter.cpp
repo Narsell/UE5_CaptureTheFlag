@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Flag.h"
+#include "CTFPlayerState.h"
 
 TAutoConsoleVariable<int32> ACaptureTheFlagCharacter::CVarCanJump(
 	TEXT("r.CanJump"),
@@ -26,10 +27,10 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	:
-	MovementComponent(GetCharacterMovement()),
-	CameraBoom(CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"))),
+	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
 	FollowCamera(CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"))),
-	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket")))
+	CameraBoom(CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"))),
+	MovementComponent(GetCharacterMovement())
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -70,6 +71,8 @@ void ACaptureTheFlagCharacter::BeginPlay()
 		}
 	}
 
+	PlayerState = GetController()->GetPlayerState<ACTFPlayerState>();
+
 	MaxRunningSpeed = MovementComponent->MaxWalkSpeed;
 }
 
@@ -81,6 +84,11 @@ void ACaptureTheFlagCharacter::RegenerateStamina()
 void ACaptureTheFlagCharacter::ConsumeStamina()
 {
 	StaminaPoints = FMath::Clamp(StaminaPoints - 20.f, 0.f, MaxStaminaPoints);
+}
+
+void ACaptureTheFlagCharacter::TakeDamage()
+{
+	PlayerState->ReceiveDamage(15.f);
 }
 
 void ACaptureTheFlagCharacter::Tick(float DeltaTime)
@@ -136,6 +144,9 @@ void ACaptureTheFlagCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Sprinting
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::SprintInput);
+
+		// Debuging
+		EnhancedInputComponent->BindAction(DebugAction_1, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::TakeDamage);
 	}
 	else
 	{
