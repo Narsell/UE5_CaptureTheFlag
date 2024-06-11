@@ -12,7 +12,7 @@
 
 ATeamBase::ATeamBase()
 	:
-	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
+	DropFlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
 	TeamId(ETeamId::A),
 	GameMode(nullptr)
 {
@@ -22,7 +22,7 @@ ATeamBase::ATeamBase()
 	GetCollisionComponent()->SetCollisionObjectType(ECC_Base);
 	GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &ATeamBase::OnFlagEntered);
 
-	FlagSocket->SetupAttachment(RootComponent);
+	DropFlagSocket->SetupAttachment(RootComponent);
 
 }
 
@@ -33,7 +33,7 @@ void ATeamBase::BeginPlay()
 
 }
 
-void ATeamBase::SetupSpawnPoints()
+void ATeamBase::ResizeSpawnZones()
 {
 
 }
@@ -48,7 +48,7 @@ void ATeamBase::OnFlagEntered(UPrimitiveComponent* OverlappedComponent, AActor* 
 	if (Flag && Flag->GetCarrier()) {
 		ACaptureTheFlagCharacter* PlayerCarrier = Flag->GetCarrier();
 		PlayerCarrier->DropFlag();
-		Flag->SetActorLocation(FlagSocket->GetComponentLocation());
+		Flag->SetActorLocation(DropFlagSocket->GetComponentLocation());
 		ensure(GameMode);
 		if (GameMode) {
 			GameMode->OnTeamScored(TeamId);

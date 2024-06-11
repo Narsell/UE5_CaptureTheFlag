@@ -71,7 +71,9 @@ void ACaptureTheFlagCharacter::BeginPlay()
 		}
 	}
 
-	PlayerState = GetController()->GetPlayerState<ACTFPlayerState>();
+	if(Controller){
+		PlayerState = Controller->GetPlayerState<ACTFPlayerState>();
+	}
 
 	MaxRunningSpeed = MovementComponent->MaxWalkSpeed;
 }
@@ -222,7 +224,7 @@ void ACaptureTheFlagCharacter::Jump()
 	if (!CanJump) { return; };
 
 	Super::Jump();
-	#ifdef WITH_EDITOR
-		UE_LOG(LogTemp, Warning, TEXT("JUMPING!"));
-	#endif
+	//#ifdef WITH_EDITOR
+	//	UE_LOG(LogTemp, Warning, TEXT("JUMPING!"));
+	//#endif
 }

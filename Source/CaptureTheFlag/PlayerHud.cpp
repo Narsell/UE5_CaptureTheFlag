@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h" 
 
 
+
 void UPlayerHud::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -26,7 +27,7 @@ void UPlayerHud::NativeConstruct()
 	GameMode->OnTeamScoreDelegate.BindUObject(this, &UPlayerHud::UpdateTeamScore);
 	
 	// Some formatting options to display floats as integers
-	HealthFormatOptions.SetMaximumFractionalDigits(0);
+	FloatFormatOptions.SetMaximumFractionalDigits(0);
 
 	// Update elements with current values when the widget is created.
 	UpdateCurrentHealth(PlayerState->GetCurrentHealth());
@@ -38,15 +39,25 @@ void UPlayerHud::NativeConstruct()
 	
 }
 
+void UPlayerHud::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (GetWorld()->GetTimerManager().IsTimerActive(GameMode->GetMatchTimerHandle())) {
+		const float TimeLeftInMatch = GetWorld()->GetTimerManager().GetTimerRemaining(GameMode->GetMatchTimerHandle());
+		MatchTimerLabel->SetText(FText::AsNumber(TimeLeftInMatch, &FloatFormatOptions));
+	}
+}
+
 void UPlayerHud::UpdateCurrentHealth(float NewHealth)
 {
-	CurrentHealthLabel->SetText(FText::AsNumber(NewHealth, &HealthFormatOptions));
+	CurrentHealthLabel->SetText(FText::AsNumber(NewHealth, &FloatFormatOptions));
 	HealthBar->SetPercent(NewHealth / PlayerState->GetMaxHealth());
 }
 
 void UPlayerHud::UpdateMaxHealth(float NewMaxHealth) 
 {
-	MaxHealthLabel->SetText(FText::AsNumber(NewMaxHealth, &HealthFormatOptions));
+	MaxHealthLabel->SetText(FText::AsNumber(NewMaxHealth, &FloatFormatOptions));
 	HealthBar->SetPercent(PlayerState->GetCurrentHealth() / NewMaxHealth);
 }
 

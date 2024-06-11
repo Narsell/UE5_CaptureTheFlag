@@ -11,6 +11,7 @@
 #define ECC_Base ECollisionChannel::ECC_GameTraceChannel2
 
 class ACTFGameMode;
+class ASpawnZone;
 
 /**
  * 
@@ -32,7 +33,7 @@ protected:
 	void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void SetupSpawnPoints();
+	void ResizeSpawnZones();
 
 private:
 
@@ -41,21 +42,23 @@ private:
 	
 private:
 
-	/** Scene component to mark the location the flag will be dropped in momentarily. */
-	UPROPERTY(EditDefaultsOnly, Category=Flag)
-	USceneComponent* FlagSocket;
+	UPROPERTY(EditInstanceOnly, Category=Setup)
+	TArray<ASpawnZone*> FlagSpawnZones;
+
+	UPROPERTY(EditInstanceOnly, Category = Setup)
+	TArray<ASpawnZone*> PlayerSpawnZones;
 
 	/**  Team identifier. */
-	UPROPERTY(EditInstanceOnly, Category=Setup)
+	UPROPERTY(EditInstanceOnly, Category=Setup, BlueprintReadOnly, meta=(AllowPrivateAccess))
 	ETeamId TeamId;
-
-	/**  Number of flags to spawn for the team belonging to this base. */
-	UPROPERTY(EditInstanceOnly, Category=Setup)
-	int32 NumberOfFlags = 2;
 
 	/** Class of the Flag instance. */
 	UPROPERTY(EditAnywhere, Category = Setup)
 	TSubclassOf<AFlag> FlagType;
+
+	/** Scene component to mark the location the flag will be dropped in momentarily. */
+	UPROPERTY(EditDefaultsOnly, Category=Flag)
+	USceneComponent* DropFlagSocket;
 
 	ACTFGameMode* GameMode;
 

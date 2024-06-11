@@ -20,6 +20,10 @@ class CAPTURETHEFLAG_API UPlayerHud : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 protected:
 
 	virtual void NativeConstruct() override;
@@ -53,6 +57,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TeamBMaxScoreLabel;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MatchTimerLabel;
+
 private:
 
 	/** Updates the current health values on the HUD with the NewHealth provided. */
@@ -77,6 +84,6 @@ private:
 	ACTFGameState* GameState = nullptr;
 	ACTFGameMode* GameMode = nullptr;
 
-	FNumberFormattingOptions HealthFormatOptions;
+	FNumberFormattingOptions FloatFormatOptions;
 	
 };
