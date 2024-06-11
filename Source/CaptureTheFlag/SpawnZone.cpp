@@ -10,18 +10,18 @@ ASpawnZone::ASpawnZone()
 	PrimaryActorTick.bCanEverTick = false;
 
 	EditorLocationSprite = CreateEditorOnlyDefaultSubobject<UBillboardComponent>(TEXT("LocationSprite"));
-	EditorDisplayName = CreateEditorOnlyDefaultSubobject<UTextRenderComponent>(TEXT("DisplayName"));
+	EditorTextRenderName = CreateEditorOnlyDefaultSubobject<UTextRenderComponent>(TEXT("DisplayName"));
 	EditorForwardArrow = CreateEditorOnlyDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
 
 	EditorLocationSprite->bHiddenInGame = true;
 	SetRootComponent(EditorLocationSprite);
 
-	EditorDisplayName->SetupAttachment(RootComponent);
-	EditorDisplayName->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
-	EditorDisplayName->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
-	EditorDisplayName->SetRelativeLocation(FVector(0.f, 0.f, 60.f));
-	EditorDisplayName->SetWorldSize(20.f);
-	EditorDisplayName->bHiddenInGame = true;
+	EditorTextRenderName->SetupAttachment(RootComponent);
+	EditorTextRenderName->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	EditorTextRenderName->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+	EditorTextRenderName->SetRelativeLocation(FVector(0.f, 0.f, 60.f));
+	EditorTextRenderName->SetWorldSize(20.f);
+	EditorTextRenderName->bHiddenInGame = true;
 
 	EditorForwardArrow->SetupAttachment(RootComponent);
 	EditorForwardArrow->ArrowColor = FColor(149, 199, 254);
@@ -42,6 +42,11 @@ void ASpawnZone::BeginPlay()
 
 void ASpawnZone::SetEditorDisplayName()
 {
-	EditorDisplayName->SetText(FText::FromString(SpawnClass.Get() ? SpawnClass.Get()->GetName() : FString("")));
+	if (EditorCustomName.Len() > 0) {
+		EditorTextRenderName->SetText(FText::FromString(EditorCustomName));
+	}
+	else {
+		EditorTextRenderName->SetText(FText::FromString(SpawnClass.Get() ? SpawnClass.Get()->GetName() : EditorCustomName));
+	}
 }
 
