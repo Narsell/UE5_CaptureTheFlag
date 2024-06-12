@@ -27,7 +27,6 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
-	void GrabFlag(AFlag* Flag);
 	void DropFlag();
 
 	/** Returns CameraBoom subobject **/
@@ -62,6 +61,13 @@ private:
 	void ConsumeStamina();
 
 	void TakeDamage();
+
+	void SetReducedMovementSpeed(const bool ReduceMovementSpeed);
+
+	void GrabFlag(AFlag* Flag);
+	
+	UFUNCTION()
+	void OnOverlapFlag(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
 
@@ -118,6 +124,10 @@ private:
 	/** Maximum speed the player can reach while sprinting */
 	UPROPERTY(EditAnywhere, Category = Movement)
 	float MaxSprintSpeed = 600.f;
+
+	/** Percent of the normal player speed applied when the player is carrying a flag. (0 - 1) */
+	UPROPERTY(EditAnywhere, Category = Movement, meta = (ClampMin = 0, ClampMax = 1))
+	float FlagCarrierSpeedPercent = 0.8f;
 
 	/** Determines if the player is pressing the sprint input */
 	bool bIsSprintInputPressed = false;

@@ -21,7 +21,12 @@ public:
 	AFlag();
 
 	UFUNCTION(BlueprintCallable)
-	ACaptureTheFlagCharacter* GetCarrier() const { return Carrier; };
+	ACaptureTheFlagCharacter* GetCarrier() const;
+
+	void SetCarrier(ACaptureTheFlagCharacter* InCarrier);
+
+	/** Resets the carrier reference and starts the destruction timer. */
+	void OnDropped();
 
 protected:
 
@@ -29,13 +34,17 @@ protected:
 
 private:
 
-	UFUNCTION()
-	void OnGrabbed(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	/** Intermediate function which calls Destroy method. Meant to be called by destruction timer. */
+	void GetDestroyed();
 
 private:
 
 	/** Pointer to flag carrier player. */
-	ACaptureTheFlagCharacter* Carrier;
+	TWeakObjectPtr<ACaptureTheFlagCharacter> Carrier;
+
+	/** Time before being destroyed after being dropped. */
+	UPROPERTY(EditAnywhere, Category = Setup)
+	float TimeBeforeDestruction = 3.f;
 
 	UPROPERTY(EditAnywhere, Category=Mesh)
 	UStaticMeshComponent* PoleMesh;
@@ -43,5 +52,6 @@ private:
 	UPROPERTY(EditAnywhere, Category=Mesh)
 	UStaticMeshComponent* FlagMesh;
 
+	FTimerHandle DestructionTimer;
 	
 };

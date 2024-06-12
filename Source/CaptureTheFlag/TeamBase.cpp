@@ -9,7 +9,6 @@
 #include "CaptureTheFlagCharacter.h"
 #include "CTFGameMode.h"
 
-
 ATeamBase::ATeamBase()
 	:
 	DropFlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
@@ -38,6 +37,7 @@ void ATeamBase::ResizeSpawnZones()
 
 }
 
+// TODO: Detect player entering instead, check collision profiles. Team base should overlap pawn only, pawn should overlap team base as well.
 void ATeamBase::OnFlagEntered(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
@@ -46,8 +46,7 @@ void ATeamBase::OnFlagEntered(UPrimitiveComponent* OverlappedComponent, AActor* 
 	ensure(Flag);
 
 	if (Flag && Flag->GetCarrier()) {
-		ACaptureTheFlagCharacter* PlayerCarrier = Flag->GetCarrier();
-		PlayerCarrier->DropFlag();
+		Flag->GetCarrier()->DropFlag();
 		Flag->SetActorLocation(DropFlagSocket->GetComponentLocation());
 		ensure(GameMode);
 		if (GameMode) {

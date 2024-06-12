@@ -55,6 +55,8 @@ ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	FlagSocket->SetupAttachment(RootComponent);
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACaptureTheFlagCharacter::OnOverlapFlag);
 }
 
 void ACaptureTheFlagCharacter::BeginPlay()
@@ -93,6 +95,22 @@ void ACaptureTheFlagCharacter::TakeDamage()
 	PlayerState->ReceiveDamage(15.f);
 }
 
+void ACaptureTheFlagCharacter::SetReducedMovementSpeed(const bool ReduceMovementSpeed)
+{
+	MaxSprintSpeed = ReduceMovementSpeed ? MaxSprintSpeed * FlagCarrierSpeedPercent : MaxSprintSpeed / FlagCarrierSpeedPercent;
+	MaxRunningSpeed = ReduceMovementSpeed ? MaxRunningSpeed * FlagCarrierSpeedPercent : MaxRunningSpeed / FlagCarrierSpeedPercent;
+}
+
+void ACaptureTheFlagCharacter::OnOverlapFlag(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AFlag* Flag = Cast<AFlag>(OtherActor);
+
+	if (PlayerState && !PlayerState->IsFlagCarrier() && Flag) {
+		GrabFlag(Flag);
+	}
+}
+
+
 void ACaptureTheFlagCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -114,15 +132,27 @@ void ACaptureTheFlagCharacter::Tick(float DeltaTime)
 
 void ACaptureTheFlagCharacter::GrabFlag(AFlag* Flag)
 {
-	ensure(!ActiveFlag);
+	ensure(!ActiveFlag && Flag);
 
+	if (!PlayerState) return;
+
+	PlayerState->SetIsFlagCarrier(true);
+	SetReducedMovementSpeed(true);
 	ActiveFlag = Flag;
+	ActiveFlag->SetCarrier(this);
+
 }
 
 void ACaptureTheFlagCharacter::DropFlag()
 {
 	ensure(ActiveFlag);
 
+	if (!PlayerState || !ActiveFlag) return;
+
+	ActiveFlag->OnDropped();
+
+	PlayerState->SetIsFlagCarrier(false);
+	SetReducedMovementSpeed(false);
 	ActiveFlag = nullptr;
 }
 

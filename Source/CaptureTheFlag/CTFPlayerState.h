@@ -32,6 +32,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsFlagCarrier() const { return bIsFlagCarrier; };
 
+	void SetIsFlagCarrier(const bool IsFlagCarrier) { bIsFlagCarrier = IsFlagCarrier; };
+
 protected:
 
 	virtual void BeginPlay() override;

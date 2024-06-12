@@ -45,7 +45,7 @@ private:
 	UPROPERTY(EditInstanceOnly, Category=Setup)
 	TArray<ASpawnZone*> FlagSpawnZones;
 
-	UPROPERTY(EditInstanceOnly, Category = Setup)
+	UPROPERTY(EditInstanceOnly, Category=Setup)
 	TArray<ASpawnZone*> PlayerSpawnZones;
 
 	/**  Team identifier. */
@@ -53,7 +53,7 @@ private:
 	ETeamId TeamId;
 
 	/** Class of the Flag instance. */
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditAnywhere, Category=Setup)
 	TSubclassOf<AFlag> FlagType;
 
 	/** Scene component to mark the location the flag will be dropped in momentarily. */
@@ -61,5 +61,4 @@ private:
 	USceneComponent* DropFlagSocket;
 
 	ACTFGameMode* GameMode;
-
 };

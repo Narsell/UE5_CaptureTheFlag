@@ -5,6 +5,7 @@
 #include "Components/ShapeComponent.h"
 #include "CaptureTheFlagCharacter.h"
 #include "Components/BillboardComponent.h" 
+#include "CTFPlayerState.h"
 
 AFlag::AFlag()
 	:
@@ -23,7 +24,23 @@ AFlag::AFlag()
 
 	GetCollisionComponent()->bHiddenInGame = true;
 	GetCollisionComponent()->SetCollisionObjectType(ECC_Flag);
-	GetCollisionComponent()->OnComponentBeginOverlap.AddDynamic(this, &AFlag::OnGrabbed);
+}
+
+ACaptureTheFlagCharacter* AFlag::GetCarrier() const
+{
+	return Carrier.IsValid() ? Carrier.Get() : nullptr;
+}
+
+void AFlag::SetCarrier(ACaptureTheFlagCharacter* InCarrier)
+{
+	Carrier = InCarrier;
+	GetCollisionComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+}
+
+void AFlag::OnDropped()
+{
+	Carrier.Reset();
+	GetWorldTimerManager().SetTimer(DestructionTimer, this, &AFlag::GetDestroyed, TimeBeforeDestruction, false);
 }
 
 void AFlag::BeginPlay()
@@ -33,15 +50,7 @@ void AFlag::BeginPlay()
 
 }
 
-void AFlag::OnGrabbed(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AFlag::GetDestroyed()
 {
-	ACaptureTheFlagCharacter* Player = Cast<ACaptureTheFlagCharacter>(OtherActor);
-
-	//ensure(Player);
-
-	if (Player) {
-		Player->GrabFlag(this);
-		Carrier = Player;
-		GetCollisionComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-	}
+	Destroy();
 }
