@@ -4,6 +4,7 @@
 #include "Components/BillboardComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Components/ArrowComponent.h" 
+#include "TeamBase.h"
 
 ASpawnZone::ASpawnZone()
 {
@@ -28,25 +29,34 @@ ASpawnZone::ASpawnZone()
 
 }
 
+void ASpawnZone::SetOwnerBase(ATeamBase* TeamBase)
+{
+	OwnerBase = TeamBase;
+}
+
 void ASpawnZone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (SpawnClass.Get()) {
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		GetWorld()->SpawnActor(SpawnClass.Get(), &GetTransform(), SpawnParams);
-	}
+	if (!SpawnClass.Get()) return; 
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	AActor* SpawnedActor = GetWorld()->SpawnActor(SpawnClass.Get(), &GetTransform(), SpawnParams);
 
 }
 
-void ASpawnZone::SetEditorDisplayName()
+void ASpawnZone::UpdateEditorValues()
 {
 	if (EditorCustomName.Len() > 0) {
 		EditorTextRenderName->SetText(FText::FromString(EditorCustomName));
 	}
 	else {
 		EditorTextRenderName->SetText(FText::FromString(SpawnClass.Get() ? SpawnClass.Get()->GetName() : EditorCustomName));
+	}
+
+	if (OwnerBase && !OwnerBase->GetSpawnZones().Contains(this)) {
+		OwnerBase = nullptr;
 	}
 }
 

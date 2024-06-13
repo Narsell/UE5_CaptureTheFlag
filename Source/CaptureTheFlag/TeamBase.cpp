@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h" 
 #include "CaptureTheFlagCharacter.h"
 #include "CTFGameMode.h"
+#include "SpawnZone.h"
 
 ATeamBase::ATeamBase()
 	:
@@ -23,6 +24,7 @@ ATeamBase::ATeamBase()
 
 	DropFlagSocket->SetupAttachment(RootComponent);
 
+	SpawnZones.Reserve(3);
 }
 
 void ATeamBase::BeginPlay()
@@ -32,9 +34,17 @@ void ATeamBase::BeginPlay()
 
 }
 
-void ATeamBase::ResizeSpawnZones()
+void ATeamBase::SetupSpawnZones()
 {
-
+	for (int i = 0; i < SpawnZones.Num(); ++i)
+	{
+		if (!SpawnZones[i]) continue;
+		else if (SpawnZones[i]->GetTeamBase() && SpawnZones[i]->GetTeamBase() != this && SpawnZones[i]->GetTeamBase()->SpawnZones.Contains(SpawnZones[i]))
+		{
+			SpawnZones[i]->GetTeamBase()->SpawnZones.Remove(SpawnZones[i]);
+		}
+		SpawnZones[i]->SetOwnerBase(this);
+	}
 }
 
 // TODO: Detect player entering instead, check collision profiles. Team base should overlap pawn only, pawn should overlap team base as well.

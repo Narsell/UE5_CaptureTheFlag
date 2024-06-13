@@ -6,6 +6,13 @@
 #include "GameFramework/GameState.h"
 #include "CTFGameState.generated.h"
 
+UENUM(BlueprintType)
+enum class ETeamId : uint8 {
+	A,
+	B,
+	NONE
+};
+
 USTRUCT(BlueprintType, Category=Teams)
 struct FTeam {
 
@@ -21,11 +28,6 @@ struct FTeam {
 	FColor Color = FColor::Magenta;
 };
 
-UENUM(BlueprintType)
-enum class ETeamId : uint8 {
-	A,
-	B
-};
 
 /**
  * 
@@ -51,7 +53,7 @@ public:
 	void AddScoreToTeam(const ETeamId& TeamId);
 
 protected:
-
+	// TODO: Store these in an unordered_map with keys as teamids and values as FTeam
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Teams)
 	FTeam TeamA;
 

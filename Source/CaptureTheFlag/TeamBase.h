@@ -11,6 +11,7 @@
 #define ECC_Base ECollisionChannel::ECC_GameTraceChannel2
 
 class ACTFGameMode;
+class APlayerSpawnZone;
 class ASpawnZone;
 
 /**
@@ -25,15 +26,19 @@ public:
 
 	ATeamBase();
 
-	UFUNCTION(BlueprintCallable, Category=Team)
-	const ETeamId& GetTeamId() const { return TeamId; };
+	/** Gets the team ID that this base belongs to */
+	UFUNCTION(BlueprintCallable, Category = Team)
+	ETeamId GetTeamId() const { return TeamId; };
+
+	/** Gets the array of spawn zones binded to this base */
+	const TArray<ASpawnZone*>& GetSpawnZones() const { return SpawnZones; }
 
 protected:
 
 	void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void ResizeSpawnZones();
+	void SetupSpawnZones();
 
 private:
 
@@ -43,18 +48,11 @@ private:
 private:
 
 	UPROPERTY(EditInstanceOnly, Category=Setup)
-	TArray<ASpawnZone*> FlagSpawnZones;
-
-	UPROPERTY(EditInstanceOnly, Category=Setup)
-	TArray<ASpawnZone*> PlayerSpawnZones;
+	TArray<ASpawnZone*> SpawnZones;
 
 	/**  Team identifier. */
 	UPROPERTY(EditInstanceOnly, Category=Setup, BlueprintReadOnly, meta=(AllowPrivateAccess))
 	ETeamId TeamId;
-
-	/** Class of the Flag instance. */
-	UPROPERTY(EditAnywhere, Category=Setup)
-	TSubclassOf<AFlag> FlagType;
 
 	/** Scene component to mark the location the flag will be dropped in momentarily. */
 	UPROPERTY(EditDefaultsOnly, Category=Flag)

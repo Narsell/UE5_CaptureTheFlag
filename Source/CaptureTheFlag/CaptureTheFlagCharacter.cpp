@@ -12,6 +12,9 @@
 #include "InputActionValue.h"
 #include "Flag.h"
 #include "CTFPlayerState.h"
+#include "SpawnZone.h"
+#include "TeamBase.h"
+
 
 TAutoConsoleVariable<int32> ACaptureTheFlagCharacter::CVarCanJump(
 	TEXT("r.CanJump"),
@@ -73,11 +76,14 @@ void ACaptureTheFlagCharacter::BeginPlay()
 		}
 	}
 
-	if(Controller){
+	if(Controller) 
+	{
 		PlayerState = Controller->GetPlayerState<ACTFPlayerState>();
 	}
 
 	MaxRunningSpeed = MovementComponent->MaxWalkSpeed;
+	
+	SetTeamColors();
 }
 
 void ACaptureTheFlagCharacter::RegenerateStamina()
@@ -110,7 +116,6 @@ void ACaptureTheFlagCharacter::OnOverlapFlag(UPrimitiveComponent* OverlappedComp
 	}
 }
 
-
 void ACaptureTheFlagCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -141,6 +146,17 @@ void ACaptureTheFlagCharacter::GrabFlag(AFlag* Flag)
 	ActiveFlag = Flag;
 	ActiveFlag->SetCarrier(this);
 
+}
+
+void ACaptureTheFlagCharacter::SetTeamColors()
+{
+	ASpawnZone* SpawnZone = Cast<ASpawnZone>(GetOwner());
+
+	if (SpawnZone && SpawnZone->GetTeamBase())
+	{
+		TeamId = SpawnZone->GetTeamBase()->GetTeamId();
+		SetTeamColorsEvent(TeamId);
+	}
 }
 
 void ACaptureTheFlagCharacter::DropFlag()

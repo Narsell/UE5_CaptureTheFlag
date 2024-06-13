@@ -6,12 +6,13 @@
 #include "CaptureTheFlagCharacter.h"
 #include "Components/BillboardComponent.h" 
 #include "CTFPlayerState.h"
+#include "TeamBase.h"
+#include "SpawnZone.h"
 
 AFlag::AFlag()
 	:
 	PoleMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pole Mesh"))),
-	FlagMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Flag Mesh"))),
-	Carrier(nullptr)
+	FlagMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Flag Mesh")))
 {
 
 	PoleMesh->SetupAttachment(RootComponent);
@@ -24,6 +25,8 @@ AFlag::AFlag()
 
 	GetCollisionComponent()->bHiddenInGame = true;
 	GetCollisionComponent()->SetCollisionObjectType(ECC_Flag);
+
+
 }
 
 ACaptureTheFlagCharacter* AFlag::GetCarrier() const
@@ -46,11 +49,23 @@ void AFlag::OnDropped()
 void AFlag::BeginPlay()
 {
 	Super::BeginPlay();
+
 	GetSpriteComponent()->SetVisibility(false);
 
+	SetTeamColors();
 }
 
 void AFlag::GetDestroyed()
 {
 	Destroy();
+}
+
+void AFlag::SetTeamColors()
+{
+	ASpawnZone* SpawnZone = Cast<ASpawnZone>(GetOwner());
+
+	if (SpawnZone && SpawnZone->GetTeamBase()) {
+		TeamId = SpawnZone->GetTeamBase()->GetTeamId();
+		SetTeamColorsEvent(TeamId);
+	}
 }

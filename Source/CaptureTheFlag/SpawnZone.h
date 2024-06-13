@@ -8,6 +8,8 @@
 
 class UTextRenderComponent;
 class UArrowComponent;
+class ATeamBase;
+
 
 
 UCLASS(Abstract)
@@ -19,14 +21,28 @@ public:
 
 	ASpawnZone();
 
+	/** Sets the reference to a new team base. */
+	virtual void SetOwnerBase(ATeamBase* TeamBase);
+
+	/** Returns the team base that owns this spawner, if any. */
+	ATeamBase* GetTeamBase() const { return OwnerBase; }
+
 protected:
 
 	virtual void BeginPlay() override;
 
+	/**
+	 * Updates multiple variables relevant to be displayed while in-editor, useful for designers.
+	 * Variables updated: Actor class/custom editor name to render, Team base owner reference.
+	 */
 	UFUNCTION(BlueprintCallable)
-	void SetEditorDisplayName();
+	void UpdateEditorValues();
 
 private:
+
+	/** Object reference to the team base that owns this spawner */
+	UPROPERTY(VisibleInstanceOnly, Category=Setup)
+	ATeamBase* OwnerBase;
 
 	/** Class of the AActor that should spawn here */
 	UPROPERTY(EditAnywhere, Category=Setup)

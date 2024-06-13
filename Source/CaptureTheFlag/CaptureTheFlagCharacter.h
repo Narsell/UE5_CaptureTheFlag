@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "CTFGameState.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
@@ -27,6 +28,7 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	/** TODO: documentation */
 	void DropFlag();
 
 	/** Returns CameraBoom subobject **/
@@ -53,19 +55,35 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 
+	/** Blueprint event to set the appropriate materials/visuals of the actor to match the team */
+	UFUNCTION(BlueprintImplementableEvent, Category = Setup)
+	void SetTeamColorsEvent(ETeamId InTeamId);
+
 
 private:
 
+	/** TODO: documentation */
 	void RegenerateStamina();
 
+	/** TODO: documentation */
 	void ConsumeStamina();
 
+	/** TODO: documentation */
 	void TakeDamage();
 
+	/** TODO: documentation */
 	void SetReducedMovementSpeed(const bool ReduceMovementSpeed);
 
+	/** TODO: documentation */
 	void GrabFlag(AFlag* Flag);
+
+	/** 
+	 * Prepares the refences required to call the Blueprint Event 'SetTeamColorsEvent' 
+	 * Call on or after BeginPlay for it to work.
+	 */
+	void SetTeamColors();
 	
+	/** TODO: documentation */
 	UFUNCTION()
 	void OnOverlapFlag(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -146,6 +164,9 @@ private:
 	 * Set by the movement component in BeginPlay so no need to initialize.
 	 */
 	float MaxRunningSpeed;
+
+	/** Team this player belongs to */
+	ETeamId TeamId = ETeamId::NONE;
 
 	/** Movement component pointer */
 	UCharacterMovementComponent* MovementComponent;
