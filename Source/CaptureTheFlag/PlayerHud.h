@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerHud.generated.h"
 
+class ACaptureTheFlagCharacter;
 class ACTFPlayerState;
 class ACTFGameMode;
 class UProgressBar;
@@ -40,6 +41,15 @@ protected:
 	UTextBlock* MaxHealthLabel;
 
 	UPROPERTY(meta = (BindWidget))
+	UProgressBar* StaminaBar;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CurrentStaminaLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MaxStaminaLabel;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TeamANameLabel;
 
 	UPROPERTY(meta = (BindWidget))
@@ -68,6 +78,12 @@ private:
 	/** Updates the maximum health values on the HUD with the NewMaxHealth provided. */
 	void UpdateMaxHealth(float NewMaxHealth);
 
+	/** Updates the current health values on the HUD with the NewHealth provided. */
+	void UpdateCurrentStamina(float NewStamina);
+
+	/** Updates the maximum health values on the HUD with the NewMaxHealth provided. */
+	void UpdateMaxStamina(float NewMaxStamina);
+
 	/** Updates the team name labels on the HUD with the current names set on the Game State */
 	void UpdateTeamNames();
 
@@ -80,6 +96,13 @@ private:
 
 private:
 
+	float CurrentHealth = 0.f;
+	float MaxHealth = 0.f;
+
+	float CurrentStamina = 0.f;
+	float MaxStamina = 0.f;
+
+	ACaptureTheFlagCharacter* PlayerCharacter = nullptr;
 	ACTFPlayerState* PlayerState = nullptr;
 	ACTFGameState* GameState = nullptr;
 	ACTFGameMode* GameMode = nullptr;

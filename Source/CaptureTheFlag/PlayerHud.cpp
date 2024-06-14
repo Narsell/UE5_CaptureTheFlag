@@ -6,7 +6,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h" 
-
+#include "CaptureTheFlagCharacter.h"
 
 
 void UPlayerHud::NativeConstruct()
@@ -14,24 +14,35 @@ void UPlayerHud::NativeConstruct()
 	Super::NativeConstruct();
 
 	// Setting references
+	PlayerCharacter = GetOwningPlayerPawn<ACaptureTheFlagCharacter>();
 	PlayerState = Cast<ACTFPlayerState>(GetOwningPlayerState());
 	GameState = Cast<ACTFGameState>(UGameplayStatics::GetGameState(this));
 	GameMode = Cast<ACTFGameMode>(UGameplayStatics::GetGameMode(this));
 
-	if (!PlayerState || !GameState || !GameMode) return;
-	ensure(PlayerState && GameState && GameMode);
+	ensure(PlayerState && GameState && GameMode && PlayerCharacter);
+	if (!PlayerState || !GameState || !GameMode ||!PlayerCharacter) return;
 
 	// Binding delegates to update functions.
 	PlayerState->OnCurrentHealthUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateCurrentHealth);
 	PlayerState->OnMaxHealthUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateMaxHealth);
+	PlayerCharacter->CurrentStaminaUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateCurrentStamina);
+	PlayerCharacter->MaxStaminaUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateMaxStamina);
 	GameMode->OnTeamScoreDelegate.BindUObject(this, &UPlayerHud::UpdateTeamScore);
 	
 	// Some formatting options to display floats as integers
 	FloatFormatOptions.SetMaximumFractionalDigits(0);
 
 	// Update elements with current values when the widget is created.
-	UpdateCurrentHealth(PlayerState->GetCurrentHealth());
-	UpdateMaxHealth(PlayerState->GetMaxHealth());
+	CurrentHealth = PlayerState->GetCurrentHealth();
+	MaxHealth = PlayerState->GetMaxHealth();
+	UpdateCurrentHealth(CurrentHealth);
+	UpdateMaxHealth(MaxHealth);
+
+	CurrentStamina = PlayerCharacter->GetCurrentStamina();
+	MaxStamina = PlayerCharacter->GetMaxStamina();
+	UpdateCurrentStamina(CurrentStamina);
+	UpdateMaxStamina(MaxStamina);
+
 	UpdateTeamNames();
 	UpdateTeamMaxScores();
 	UpdateTeamScore(ETeamId::A);
@@ -51,14 +62,34 @@ void UPlayerHud::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UPlayerHud::UpdateCurrentHealth(float NewHealth)
 {
-	CurrentHealthLabel->SetText(FText::AsNumber(NewHealth, &FloatFormatOptions));
-	HealthBar->SetPercent(NewHealth / PlayerState->GetMaxHealth());
+	CurrentHealth = NewHealth;
+
+	CurrentHealthLabel->SetText(FText::AsNumber(CurrentHealth, &FloatFormatOptions));
+	HealthBar->SetPercent(CurrentHealth / MaxHealth);
 }
 
 void UPlayerHud::UpdateMaxHealth(float NewMaxHealth) 
 {
-	MaxHealthLabel->SetText(FText::AsNumber(NewMaxHealth, &FloatFormatOptions));
-	HealthBar->SetPercent(PlayerState->GetCurrentHealth() / NewMaxHealth);
+	MaxHealth = NewMaxHealth;
+
+	MaxHealthLabel->SetText(FText::AsNumber(MaxHealth, &FloatFormatOptions));
+	HealthBar->SetPercent(CurrentHealth / MaxHealth);
+}
+
+void UPlayerHud::UpdateCurrentStamina(float NewStamina)
+{
+	CurrentStamina = NewStamina;
+
+	CurrentStaminaLabel->SetText(FText::AsNumber(CurrentStamina, &FloatFormatOptions));
+	StaminaBar->SetPercent(CurrentStamina / MaxStamina);
+}
+
+void UPlayerHud::UpdateMaxStamina(float NewMaxStamina)
+{
+	MaxStamina = NewMaxStamina;
+
+	MaxStaminaLabel->SetText(FText::AsNumber(MaxStamina, &FloatFormatOptions));
+	StaminaBar->SetPercent(CurrentStamina / MaxStamina);
 }
 
 void UPlayerHud::UpdateTeamNames()

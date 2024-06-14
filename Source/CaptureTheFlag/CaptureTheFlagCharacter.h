@@ -18,6 +18,9 @@ struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
+DECLARE_DELEGATE_OneParam(FOnStaminaUpdateSignature, float NewValue);
+
+
 UCLASS(config=Game)
 class ACaptureTheFlagCharacter : public ACharacter
 {
@@ -29,6 +32,12 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	/** Single delegate executed on current stamina updates */
+	FOnStaminaUpdateSignature CurrentStaminaUpdateDelegate;
+
+	/** Single delegate executed on max stamina updates */
+	FOnStaminaUpdateSignature MaxStaminaUpdateDelegate;
+
 	/** Returns the team ID this player belongs to */
 	ETeamId GetTeamId() const { return TeamId; }
 
@@ -37,6 +46,12 @@ public:
 
 	/** Makes the player drop the flag in place */
 	void DropFlag();
+
+	/** Returns the current stamina */
+	float GetCurrentStamina() const { return StaminaPoints; }
+
+	/** Returns the maximum stamina */
+	float GetMaxStamina() const { return MaxStaminaPoints; }
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -109,11 +124,11 @@ private:
 
 	/** Stamina regeneration rate */
 	UPROPERTY(EditAnywhere, Category = Stamina)
-	float StaminaRegenRate = 2.0f;
+	float StaminaRegenRate = 0.5f;
 
 	/** Stamina consumption rate */
 	UPROPERTY(EditAnywhere, Category = Stamina)
-	float StaminaConsumptionRate = 1.0f;
+	float StaminaConsumptionRate = 0.5f;
 
 	/** Maximum speed the player can reach while sprinting */
 	UPROPERTY(EditAnywhere, Category = Movement)

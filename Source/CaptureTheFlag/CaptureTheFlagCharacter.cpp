@@ -60,6 +60,7 @@ ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	FlagSocket->SetupAttachment(RootComponent);
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACaptureTheFlagCharacter::OnOverlapFlag);
+
 }
 
 void ACaptureTheFlagCharacter::BeginPlay()
@@ -82,18 +83,22 @@ void ACaptureTheFlagCharacter::BeginPlay()
 	}
 
 	MaxRunningSpeed = MovementComponent->MaxWalkSpeed;
-	
+
+	GetWorldTimerManager().SetTimer(StaminaRegenTimer, this, &ACaptureTheFlagCharacter::RegenerateStamina, StaminaRegenRate, true, 0.f);
+
 	SetTeamColors();
 }
 
 void ACaptureTheFlagCharacter::RegenerateStamina()
 {
 	StaminaPoints = FMath::Clamp(StaminaPoints + 10.f, 0.f, MaxStaminaPoints);
+	CurrentStaminaUpdateDelegate.ExecuteIfBound(StaminaPoints);
 }
 
 void ACaptureTheFlagCharacter::ConsumeStamina()
 {
 	StaminaPoints = FMath::Clamp(StaminaPoints - 20.f, 0.f, MaxStaminaPoints);
+	CurrentStaminaUpdateDelegate.ExecuteIfBound(StaminaPoints);
 }
 
 void ACaptureTheFlagCharacter::DebugReceiveDamage()
@@ -157,8 +162,8 @@ void ACaptureTheFlagCharacter::SetTeamColors()
 	if (SpawnZone && SpawnZone->GetTeamBase())
 	{
 		TeamId = SpawnZone->GetTeamBase()->GetTeamId();
-		SetTeamColorsEvent(TeamId);
 	}
+	SetTeamColorsEvent(TeamId);
 }
 
 void ACaptureTheFlagCharacter::DropFlag()
