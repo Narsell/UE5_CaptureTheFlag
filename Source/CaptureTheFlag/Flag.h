@@ -21,13 +21,18 @@ public:
 
 	AFlag();
 
+	/** Returns a pointer to the player carrying this flag */
 	UFUNCTION(BlueprintCallable, Category=Getter)
 	ACaptureTheFlagCharacter* GetCarrier() const;
 
+	/** Returns the team ID this flag belongs to */
+	ETeamId GetTeamId() const { return TeamId; }
+
+	/** Sets the actor carrying this flag */
 	void SetCarrier(ACaptureTheFlagCharacter* InCarrier);
 
 	/** Resets the carrier reference and starts the destruction timer. */
-	void OnDropped();
+	void Drop();
 
 protected:
 
@@ -39,10 +44,10 @@ protected:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Mesh)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
 	UStaticMeshComponent* PoleMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Mesh)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Mesh)
 	UStaticMeshComponent* FlagMesh;
 
 private:
@@ -66,6 +71,7 @@ private:
 	float TimeBeforeDestruction = 3.f;
 
 	/** Team this flag belongs to */
+	UPROPERTY(VisibleInstanceOnly, Category=Setup)
 	ETeamId TeamId = ETeamId::NONE;
 
 	FTimerHandle DestructionTimer;

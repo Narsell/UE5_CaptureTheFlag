@@ -53,6 +53,7 @@ public:
 	void AddScoreToTeam(const ETeamId& TeamId);
 
 protected:
+
 	// TODO: Store these in an unordered_map with keys as teamids and values as FTeam
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Teams)
 	FTeam TeamA;

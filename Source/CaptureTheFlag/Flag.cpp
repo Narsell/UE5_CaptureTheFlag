@@ -40,7 +40,7 @@ void AFlag::SetCarrier(ACaptureTheFlagCharacter* InCarrier)
 	GetCollisionComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 }
 
-void AFlag::OnDropped()
+void AFlag::Drop()
 {
 	Carrier.Reset();
 	GetWorldTimerManager().SetTimer(DestructionTimer, this, &AFlag::GetDestroyed, TimeBeforeDestruction, false);

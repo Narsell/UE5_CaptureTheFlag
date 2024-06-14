@@ -24,11 +24,18 @@ class ACaptureTheFlagCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+
 	ACaptureTheFlagCharacter();
 	
 	virtual void Tick(float DeltaTime) override;
 
-	/** TODO: documentation */
+	/** Returns the team ID this player belongs to */
+	ETeamId GetTeamId() const { return TeamId; }
+
+	/** Returns a pointer to the flag the player is carrying */
+	AFlag* GetCarryingFlag() const { return ActiveFlag; }
+
+	/** Makes the player drop the flag in place */
 	void DropFlag();
 
 	/** Returns CameraBoom subobject **/
@@ -59,22 +66,21 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = Setup)
 	void SetTeamColorsEvent(ETeamId InTeamId);
 
-
 private:
 
-	/** TODO: documentation */
+	/** Regenerates a fixed amount of stamina points. */
 	void RegenerateStamina();
 
-	/** TODO: documentation */
+	/** Consumes a fixed amount of stamina points */
 	void ConsumeStamina();
 
-	/** TODO: documentation */
-	void TakeDamage();
+	/** Receives a fixed amount of damage, used for debugging/testing purposes with an input action. */
+	void DebugReceiveDamage();
 
-	/** TODO: documentation */
-	void SetReducedMovementSpeed(const bool ReduceMovementSpeed);
+	/** Sets the movement speed to be slow (flag carrier) or normal, depending on the input parameter. */
+	void SetSlowMovementSpeed(const bool ReduceMovementSpeed);
 
-	/** TODO: documentation */
+	/** Grabs a flag and fixes it to the player */
 	void GrabFlag(AFlag* Flag);
 
 	/** 
@@ -83,45 +89,15 @@ private:
 	 */
 	void SetTeamColors();
 	
-	/** TODO: documentation */
+	/** Delegate function call for component begin overlap */
 	UFUNCTION()
 	void OnOverlapFlag(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
-
-	/** Reference to player state instance */
-	ACTFPlayerState* PlayerState;
-
-	UPROPERTY(VisibleAnywhere, Category = Flag)
-	USceneComponent* FlagSocket;
-
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
-
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
 	
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
-
-	/** SprintInput Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* SprintAction;
+	/** Team ID this player belongs to */
+	UPROPERTY(VisibleInstanceOnly, Category = Team)
+	ETeamId TeamId = ETeamId::A;
 
 	/** Current stamina points */
 	UPROPERTY(EditInstanceOnly, Category = Stamina)
@@ -165,16 +141,51 @@ private:
 	 */
 	float MaxRunningSpeed;
 
-	/** Team this player belongs to */
-	ETeamId TeamId = ETeamId::NONE;
+	/** Reference to player state instance */
+	ACTFPlayerState* PlayerState;
+
+	/* COMPONENT REFERENCES */
+
+	UPROPERTY(VisibleAnywhere, Category = Flag)
+	USceneComponent* FlagSocket;
+
+	/** Camera boom positioning the camera behind the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* CameraBoom;
+
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* FollowCamera;
 
 	/** Movement component pointer */
 	UCharacterMovementComponent* MovementComponent;
 
-	/** Console variable to enable/disable jumping */
-	static TAutoConsoleVariable<int32> CVarCanJump;
+	/* INPUT */
+
+	/** MappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* DefaultMappingContext;
+
+	/** Jump Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* JumpAction;
+
+	/** Move Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MoveAction;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction;
+
+	/** SprintInput Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* DebugAction_1;
+
+	/** Console variable to enable/disable jumping */
+	static TAutoConsoleVariable<int32> CVarCanJump;
 };
 

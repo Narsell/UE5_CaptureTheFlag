@@ -21,11 +21,11 @@ public:
 
 	ASpawnZone();
 
+	/** Returns the team base that owns this spawner. */
+	ATeamBase* GetTeamBase() const { return OwnerBase; }
+
 	/** Sets the reference to a new team base. */
 	virtual void SetOwnerBase(ATeamBase* TeamBase);
-
-	/** Returns the team base that owns this spawner, if any. */
-	ATeamBase* GetTeamBase() const { return OwnerBase; }
 
 protected:
 

@@ -26,7 +26,7 @@ public:
 
 	ATeamBase();
 
-	/** Gets the team ID that this base belongs to */
+	/** Returns the team ID that this base belongs to */
 	UFUNCTION(BlueprintCallable, Category = Team)
 	ETeamId GetTeamId() const { return TeamId; };
 
@@ -37,6 +37,10 @@ protected:
 
 	void BeginPlay() override;
 
+	/**
+	* Updates the spawn zones data to point back to this base.
+	* Also validates and removes duplicates across other team bases.
+	*/
 	UFUNCTION(BlueprintCallable)
 	void SetupSpawnZones();
 
@@ -44,7 +48,7 @@ private:
 
 	UFUNCTION()
 	void OnFlagEntered(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
+
 private:
 
 	UPROPERTY(EditInstanceOnly, Category=Setup)
@@ -52,11 +56,11 @@ private:
 
 	/**  Team identifier. */
 	UPROPERTY(EditInstanceOnly, Category=Setup, BlueprintReadOnly, meta=(AllowPrivateAccess))
-	ETeamId TeamId;
+	ETeamId TeamId = ETeamId::A;
 
 	/** Scene component to mark the location the flag will be dropped in momentarily. */
 	UPROPERTY(EditDefaultsOnly, Category=Flag)
 	USceneComponent* DropFlagSocket;
 
-	ACTFGameMode* GameMode;
+	ACTFGameMode* GameMode = nullptr;
 };

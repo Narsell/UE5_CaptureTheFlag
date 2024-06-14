@@ -31,8 +31,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	:
 	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
-	FollowCamera(CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"))),
 	CameraBoom(CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"))),
+	FollowCamera(CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"))),
 	MovementComponent(GetCharacterMovement())
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -96,12 +96,12 @@ void ACaptureTheFlagCharacter::ConsumeStamina()
 	StaminaPoints = FMath::Clamp(StaminaPoints - 20.f, 0.f, MaxStaminaPoints);
 }
 
-void ACaptureTheFlagCharacter::TakeDamage()
+void ACaptureTheFlagCharacter::DebugReceiveDamage()
 {
 	PlayerState->ReceiveDamage(15.f);
 }
 
-void ACaptureTheFlagCharacter::SetReducedMovementSpeed(const bool ReduceMovementSpeed)
+void ACaptureTheFlagCharacter::SetSlowMovementSpeed(const bool ReduceMovementSpeed)
 {
 	MaxSprintSpeed = ReduceMovementSpeed ? MaxSprintSpeed * FlagCarrierSpeedPercent : MaxSprintSpeed / FlagCarrierSpeedPercent;
 	MaxRunningSpeed = ReduceMovementSpeed ? MaxRunningSpeed * FlagCarrierSpeedPercent : MaxRunningSpeed / FlagCarrierSpeedPercent;
@@ -111,7 +111,9 @@ void ACaptureTheFlagCharacter::OnOverlapFlag(UPrimitiveComponent* OverlappedComp
 {
 	AFlag* Flag = Cast<AFlag>(OtherActor);
 
-	if (PlayerState && !PlayerState->IsFlagCarrier() && Flag) {
+	if (!PlayerState || !Flag) return;
+
+	if (!PlayerState->IsFlagCarrier() && Flag->GetTeamId() != GetTeamId()) {
 		GrabFlag(Flag);
 	}
 }
@@ -142,7 +144,7 @@ void ACaptureTheFlagCharacter::GrabFlag(AFlag* Flag)
 	if (!PlayerState) return;
 
 	PlayerState->SetIsFlagCarrier(true);
-	SetReducedMovementSpeed(true);
+	SetSlowMovementSpeed(true);
 	ActiveFlag = Flag;
 	ActiveFlag->SetCarrier(this);
 
@@ -165,10 +167,10 @@ void ACaptureTheFlagCharacter::DropFlag()
 
 	if (!PlayerState || !ActiveFlag) return;
 
-	ActiveFlag->OnDropped();
+	ActiveFlag->Drop();
 
 	PlayerState->SetIsFlagCarrier(false);
-	SetReducedMovementSpeed(false);
+	SetSlowMovementSpeed(false);
 	ActiveFlag = nullptr;
 }
 
@@ -194,7 +196,7 @@ void ACaptureTheFlagCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::SprintInput);
 
 		// Debuging
-		EnhancedInputComponent->BindAction(DebugAction_1, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::TakeDamage);
+		EnhancedInputComponent->BindAction(DebugAction_1, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::DebugReceiveDamage);
 	}
 	else
 	{

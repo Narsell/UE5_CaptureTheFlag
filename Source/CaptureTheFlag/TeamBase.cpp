@@ -12,9 +12,7 @@
 
 ATeamBase::ATeamBase()
 	:
-	DropFlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
-	TeamId(ETeamId::A),
-	GameMode(nullptr)
+	DropFlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket")))
 {
 	SetActorHiddenInGame(false);
 
@@ -47,16 +45,17 @@ void ATeamBase::SetupSpawnZones()
 	}
 }
 
-// TODO: Detect player entering instead, check collision profiles. Team base should overlap pawn only, pawn should overlap team base as well.
 void ATeamBase::OnFlagEntered(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	AFlag* Flag = Cast<AFlag>(OtherActor);
+	ACaptureTheFlagCharacter* Player = Cast<ACaptureTheFlagCharacter>(OtherActor);
 
-	ensure(Flag);
+	if (!Player) return;
 
-	if (Flag && Flag->GetCarrier()) {
-		Flag->GetCarrier()->DropFlag();
+	AFlag* Flag = Player->GetCarryingFlag();
+
+	if (Flag && Flag->GetTeamId() != TeamId) {
+		Player->DropFlag();
 		Flag->SetActorLocation(DropFlagSocket->GetComponentLocation());
 		ensure(GameMode);
 		if (GameMode) {
