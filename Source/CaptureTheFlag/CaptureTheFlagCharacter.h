@@ -115,12 +115,13 @@ private:
 	ETeamId TeamId = ETeamId::A;
 
 	/** Current stamina points */
-	UPROPERTY(EditInstanceOnly, Category = Stamina)
-	float StaminaPoints = MaxStaminaPoints;
 
 	/** Maximum stamina points the player can have */
 	UPROPERTY(EditAnywhere, Category = Stamina)
 	float MaxStaminaPoints = 200.f;
+
+	UPROPERTY(EditInstanceOnly, Category = Stamina)
+	float StaminaPoints = MaxStaminaPoints;
 
 	/** Stamina regeneration rate */
 	UPROPERTY(EditAnywhere, Category = Stamina)
