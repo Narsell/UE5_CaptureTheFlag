@@ -3,18 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "UserConnectionData.generated.h"
+#include "PlayerOnlineData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FUserConnectionData : public FTableRowBase
+struct FPlayerOnlineData: public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
-	FUserConnectionData()
+	FPlayerOnlineData()
 		:
+		Nickname(""),
 		Level(0),
 		IsOnline(false)
 	{
@@ -30,5 +30,5 @@ public:
 	bool IsOnline;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UTexture> Icon;
+	TSoftObjectPtr<UTexture2D> Icon;
 };
