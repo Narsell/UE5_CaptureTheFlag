@@ -3,7 +3,6 @@
 #pragma once
 
 
-#include "PlayerOnlineData.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "PlayerEntry.generated.h"
@@ -24,17 +23,17 @@ public:
 
 	/**  Sets all the UI elements from the values passed in PlayerData */
 	UFUNCTION(BlueprintCallable, Category=Initialization)
-	void InitializeWithData(const FPlayerOnlineData& PlayerData);
+	void InitializeWithData(UObject* InObject);
 
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* Icon;
+	UImage* IconImage;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Nickname;
+	UTextBlock* NicknameLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Level;
+	UTextBlock* LevelLabel;
 
 };
