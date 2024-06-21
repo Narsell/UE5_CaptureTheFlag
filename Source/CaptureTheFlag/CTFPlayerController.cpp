@@ -2,8 +2,7 @@
 
 
 #include "CTFPlayerController.h"
-#include "PlayerHud.h"
-#include "OnlineStatusPanel.h"
+#include "CTFHud.h"
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
 
@@ -11,41 +10,12 @@ void ACTFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreatePlayerWidgets();
-
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
+	HudActor = Cast<ACTFHud>(GetHUD());
 
 	if(!ToggleOnlineStatusPanelAction)
 		UE_LOG(LogTemp, Error, TEXT("Input action has not been set in the player controller blueprint"))
-	EnhancedInputComponent->BindAction(ToggleOnlineStatusPanelAction, ETriggerEvent::Triggered, this, &ACTFPlayerController::ToggleOnlineStatusPanelVisibility);
 
-}
+	EnhancedInputComponent->BindAction(ToggleOnlineStatusPanelAction, ETriggerEvent::Triggered, HudActor, &ACTFHud::ToggleOnlineStatusPanelVisibility);
 
-void ACTFPlayerController::CreatePlayerWidgets()
-{
-	if (!PlayerHudClass || !OnlineStatusPanelClass) {
-		UE_LOG(LogTemp, Error, TEXT("Widget classes have not been set in the player controller blueprint"))
-		return;
-	}
-
-	PlayerHud = CreateWidget<UPlayerHud>(this, PlayerHudClass);
-	if (PlayerHud)
-	{
-		PlayerHud->AddToViewport();
-	}
-
-	OnlineStatusPanel = CreateWidget<UOnlineStatusPanel>(this, OnlineStatusPanelClass);
-	if (OnlineStatusPanel)
-	{
-		OnlineStatusPanel->SetVisibility(OnlineStatusInitialState);
-		OnlineStatusPanel->AddToViewport();
-	}
-}
-
-void ACTFPlayerController::ToggleOnlineStatusPanelVisibility()
-{
-	if (OnlineStatusPanel)
-	{
-		OnlineStatusPanel->TogglePanelVisibility();
-	}
 }

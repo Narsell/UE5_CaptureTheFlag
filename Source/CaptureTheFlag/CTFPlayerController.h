@@ -2,13 +2,11 @@
 
 #pragma once
 
-#include "Blueprint/UserWidget.h" 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "CTFPlayerController.generated.h"
 
-class UPlayerHud;
-class UOnlineStatusPanel;
+class ACTFHud;
 class UInputAction;
 
 /**
@@ -25,34 +23,11 @@ protected:
 
 private:
 
-	/** Creates Player HUD and Online Status panel widgets */
-	void CreatePlayerWidgets();
-
-	/** Toggles the visibility of the Online Status Panel widget, from visible to hidden and back */
-	void ToggleOnlineStatusPanelVisibility();
-
-private:
-
-	/** Player HUD class */
-	UPROPERTY(EditDefaultsOnly, Category=Widget)
-	TSubclassOf<UPlayerHud> PlayerHudClass;
-
-	/** Online status panel class */
-	UPROPERTY(EditDefaultsOnly, Category = Widget)
-	TSubclassOf<UOnlineStatusPanel> OnlineStatusPanelClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = Widget)
-	ESlateVisibility OnlineStatusInitialState = ESlateVisibility::Hidden;
+	/** HUD actor (non-umg one) pointer */
+	ACTFHud* HudActor = nullptr;
 
 	/** Toggle Online Menu action */
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ToggleOnlineStatusPanelAction;
 
-
-
-	/** Pointer to Player HUD widget */
-	UPlayerHud* PlayerHud = nullptr;
-
-	/** Pointer to Online Status Panel widget */
-	UOnlineStatusPanel* OnlineStatusPanel = nullptr;
 };
