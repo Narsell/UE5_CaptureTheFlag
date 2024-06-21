@@ -7,16 +7,21 @@
 #include "OnlineStatusPanel.generated.h"
 
 class UVerticalBox;
+class UButton;
 class UPlayerListPanel;
 class UDataTable;
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class CAPTURETHEFLAG_API UOnlineStatusPanel : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+
+	/** Toggles the panel visibility and configures the correct interaction mode */
+	void TogglePanelVisibility();
 
 protected:
 
@@ -25,13 +30,26 @@ protected:
 
 protected:
 
+	/** Data Table reference */
 	UPROPERTY(EditDefaultsOnly, Category = Data)
-	UDataTable* PlayerOnlineStatusDataSource;
+	TSoftObjectPtr<UDataTable> PlayerOnlineStatusDataSource;
+
+private:
+
+	/** Fills in the Player List widgets with the data obtained from the Data Table */
+	void PopulatePlayerLists();
+
+	/** Opens the panel and configures the correct interaction mode */
+	void OpenPanel();
+
+	/** Closes the panel and configures the correct interaction mode */
+	UFUNCTION()
+	void ClosePanel();
 
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* VerticalBox;
+	UButton* ClosePanelButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UPlayerListPanel* OnlinePlayerListPanel;

@@ -14,7 +14,7 @@ class UImage;
  * Player Entry class meant to be used in a ListView.
  * InitializeWithData should be called OnListItemObjectSet event on child BP (From UserObjectListEntry interface)
  */
-UCLASS()
+UCLASS(Abstract)
 class CAPTURETHEFLAG_API UPlayerEntry : public UUserWidget
 {
 	GENERATED_BODY()

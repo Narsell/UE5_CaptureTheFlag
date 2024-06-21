@@ -25,6 +25,7 @@ void UPlayerListPanel::NativePreConstruct()
 		TitleText = CustomTitle;
 	}
 	SectionTitleLabel->SetText(FText::FromString(TitleText));
+	SectionTitleLabel->SetColorAndOpacity(CustomColor);
 }
 
 void UPlayerListPanel::NativeConstruct()
@@ -37,4 +38,6 @@ void UPlayerListPanel::ToggleListViewCollapse()
 {
 	ESlateVisibility NewVisibility = PlayerListView->GetVisibility() == ESlateVisibility::Visible ? ESlateVisibility::Collapsed : ESlateVisibility::Visible;
 	PlayerListView->SetVisibility(NewVisibility);
+
+	CollapseButton->SetRenderTransformAngle(CollapseButton->GetRenderTransformAngle() + 180.f);
 }

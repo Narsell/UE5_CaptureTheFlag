@@ -20,7 +20,7 @@ class UListView;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class CAPTURETHEFLAG_API UPlayerListPanel : public UUserWidget
 {
 	GENERATED_BODY()
@@ -50,6 +50,13 @@ protected:
 	 */
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Setup)
 	FString CustomTitle;
+
+	/**
+	 * Set a custom title color for this panel, overrides the default one.
+	 * By default the panel color title will be white regardless of the panel type.
+	 */
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = Setup)
+	FColor CustomColor = FColor::White;
 
 private:
 
