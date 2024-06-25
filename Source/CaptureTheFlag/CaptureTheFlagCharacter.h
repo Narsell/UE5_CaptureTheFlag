@@ -15,10 +15,9 @@ class UInputAction;
 class AFlag;
 class ACTFPlayerState;
 struct FInputActionValue;
+class UPlayerViewModel;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
-
-DECLARE_DELEGATE_OneParam(FOnStaminaUpdateSignature, float NewValue);
 
 
 UCLASS(config=Game)
@@ -31,12 +30,6 @@ public:
 	ACaptureTheFlagCharacter();
 	
 	virtual void Tick(float DeltaTime) override;
-
-	/** Single delegate executed on current stamina updates */
-	FOnStaminaUpdateSignature CurrentStaminaUpdateDelegate;
-
-	/** Single delegate executed on max stamina updates */
-	FOnStaminaUpdateSignature MaxStaminaUpdateDelegate;
 
 	/** Returns the team ID this player belongs to */
 	ETeamId GetTeamId() const { return TeamId; }
@@ -59,6 +52,10 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 protected:
+
+	/** Initializes the player view model instance. Call this in the child BP constructor. */
+	UFUNCTION(BlueprintCallable, Category=Initialization)
+	void InitializeViewModel();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -114,22 +111,25 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = Team)
 	ETeamId TeamId = ETeamId::A;
 
-	/** Current stamina points */
+	/** Player viewmodel to update player stats such as health, stamina */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess))
+	UPlayerViewModel* PlayerViewModel;
 
 	/** Maximum stamina points the player can have */
 	UPROPERTY(EditAnywhere, Category = Stamina)
 	float MaxStaminaPoints = 200.f;
 
+	/** Current stamina points */
 	UPROPERTY(EditInstanceOnly, Category = Stamina)
 	float StaminaPoints = MaxStaminaPoints;
 
 	/** Stamina regeneration rate */
 	UPROPERTY(EditAnywhere, Category = Stamina)
-	float StaminaRegenRate = 0.5f;
+	float StaminaRegenRate = 0.1f;
 
 	/** Stamina consumption rate */
 	UPROPERTY(EditAnywhere, Category = Stamina)
-	float StaminaConsumptionRate = 0.5f;
+	float StaminaConsumptionRate = 0.1f;
 
 	/** Maximum speed the player can reach while sprinting */
 	UPROPERTY(EditAnywhere, Category = Movement)

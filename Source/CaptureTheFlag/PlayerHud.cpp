@@ -12,41 +12,6 @@
 void UPlayerHud::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	// Setting references
-	PlayerCharacter = GetOwningPlayerPawn<ACaptureTheFlagCharacter>();
-	PlayerState = Cast<ACTFPlayerState>(GetOwningPlayerState());
-	GameState = Cast<ACTFGameState>(UGameplayStatics::GetGameState(this));
-	GameMode = Cast<ACTFGameMode>(UGameplayStatics::GetGameMode(this));
-
-	ensure(PlayerState && GameState && GameMode && PlayerCharacter);
-	if (!PlayerState || !GameState || !GameMode ||!PlayerCharacter) return;
-
-	// Binding delegates to update functions.
-	PlayerState->OnCurrentHealthUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateCurrentHealth);
-	PlayerState->OnMaxHealthUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateMaxHealth);
-	PlayerCharacter->CurrentStaminaUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateCurrentStamina);
-	PlayerCharacter->MaxStaminaUpdateDelegate.BindUObject(this, &UPlayerHud::UpdateMaxStamina);
-	GameMode->OnTeamScoreDelegate.BindUObject(this, &UPlayerHud::UpdateTeamScore);
-	
-	// Some formatting options to display floats as integers
-	FloatFormatOptions.SetMaximumFractionalDigits(0);
-
-	// Update elements with current values when the widget is created.
-	CurrentHealth = PlayerState->GetCurrentHealth();
-	MaxHealth = PlayerState->GetMaxHealth();
-	UpdateCurrentHealth(CurrentHealth);
-	UpdateMaxHealth(MaxHealth);
-
-	CurrentStamina = PlayerCharacter->GetCurrentStamina();
-	MaxStamina = PlayerCharacter->GetMaxStamina();
-	UpdateCurrentStamina(CurrentStamina);
-	UpdateMaxStamina(MaxStamina);
-
-	UpdateTeamNames();
-	UpdateTeamMaxScores();
-	UpdateTeamScore(ETeamId::A);
-	UpdateTeamScore(ETeamId::B);
 	
 }
 
@@ -54,42 +19,6 @@ void UPlayerHud::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (GetWorld()->GetTimerManager().IsTimerActive(GameMode->GetMatchTimerHandle())) {
-		const float TimeLeftInMatch = GetWorld()->GetTimerManager().GetTimerRemaining(GameMode->GetMatchTimerHandle());
-		MatchTimerLabel->SetText(FText::AsNumber(TimeLeftInMatch, &FloatFormatOptions));
-	}
-}
-
-void UPlayerHud::UpdateCurrentHealth(float NewHealth)
-{
-	CurrentHealth = NewHealth;
-
-	CurrentHealthLabel->SetText(FText::AsNumber(CurrentHealth, &FloatFormatOptions));
-	HealthBar->SetPercent(CurrentHealth / MaxHealth);
-}
-
-void UPlayerHud::UpdateMaxHealth(float NewMaxHealth) 
-{
-	MaxHealth = NewMaxHealth;
-
-	MaxHealthLabel->SetText(FText::AsNumber(MaxHealth, &FloatFormatOptions));
-	HealthBar->SetPercent(CurrentHealth / MaxHealth);
-}
-
-void UPlayerHud::UpdateCurrentStamina(float NewStamina)
-{
-	CurrentStamina = NewStamina;
-
-	CurrentStaminaLabel->SetText(FText::AsNumber(CurrentStamina, &FloatFormatOptions));
-	StaminaBar->SetPercent(CurrentStamina / MaxStamina);
-}
-
-void UPlayerHud::UpdateMaxStamina(float NewMaxStamina)
-{
-	MaxStamina = NewMaxStamina;
-
-	MaxStaminaLabel->SetText(FText::AsNumber(MaxStamina, &FloatFormatOptions));
-	StaminaBar->SetPercent(CurrentStamina / MaxStamina);
 }
 
 void UPlayerHud::UpdateTeamNames()

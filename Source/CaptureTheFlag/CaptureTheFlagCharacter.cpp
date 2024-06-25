@@ -14,6 +14,7 @@
 #include "CTFPlayerState.h"
 #include "SpawnZone.h"
 #include "TeamBase.h"
+#include "PlayerViewModel.h"
 
 
 TAutoConsoleVariable<int32> ACaptureTheFlagCharacter::CVarCanJump(
@@ -36,19 +37,20 @@ ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	MovementComponent(GetCharacterMovement())
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	MovementComponent->bOrientRotationToMovement = true;	
-	MovementComponent->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
+	MovementComponent->bOrientRotationToMovement = true;
+	MovementComponent->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	MovementComponent->JumpZVelocity = 700.f;
 	MovementComponent->AirControl = 0.35f;
 	MovementComponent->MaxWalkSpeed = 500.f;
 	MovementComponent->MinAnalogWalkSpeed = 20.f;
 	MovementComponent->BrakingDecelerationWalking = 2000.f;
 	MovementComponent->BrakingDecelerationFalling = 1500.0f;
+	MaxRunningSpeed = MovementComponent->MaxWalkSpeed;
 
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
@@ -63,42 +65,65 @@ ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 
 }
 
+void ACaptureTheFlagCharacter::InitializeViewModel()
+{
+	PlayerViewModel = NewObject<UPlayerViewModel>();
+	if (PlayerViewModel) {
+		PlayerViewModel->SetMaxStamina(MaxStaminaPoints);
+		PlayerViewModel->SetCurrentStamina(StaminaPoints);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Failed to create a UPlayerViewModel instance"))
+	}
+}
+
 void ACaptureTheFlagCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
-	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
+		//Add Input Mapping Context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
 	}
 
-	if(Controller) 
+	//Get player state reference and set viewmodel ptr
+	if (Controller)
 	{
 		PlayerState = Controller->GetPlayerState<ACTFPlayerState>();
+		if (PlayerState)
+		{
+			PlayerState->SetPlayerViewModel(PlayerViewModel);
+		}
 	}
-
-	MaxRunningSpeed = MovementComponent->MaxWalkSpeed;
-
+	
+	//Start stamina regeneration timer
 	GetWorldTimerManager().SetTimer(StaminaRegenTimer, this, &ACaptureTheFlagCharacter::RegenerateStamina, StaminaRegenRate, true, 0.f);
 
+	//Sets the player mesh to reflect the assigned team ID colors
 	SetTeamColors();
 }
 
 void ACaptureTheFlagCharacter::RegenerateStamina()
 {
-	StaminaPoints = FMath::Clamp(StaminaPoints + 10.f, 0.f, MaxStaminaPoints);
-	CurrentStaminaUpdateDelegate.ExecuteIfBound(StaminaPoints);
+	StaminaPoints = FMath::Clamp(StaminaPoints + 5.f, 0.f, MaxStaminaPoints);
+	if (PlayerViewModel)
+	{
+		PlayerViewModel->SetCurrentStamina(StaminaPoints);
+	}
 }
 
 void ACaptureTheFlagCharacter::ConsumeStamina()
 {
-	StaminaPoints = FMath::Clamp(StaminaPoints - 20.f, 0.f, MaxStaminaPoints);
-	CurrentStaminaUpdateDelegate.ExecuteIfBound(StaminaPoints);
+	StaminaPoints = FMath::Clamp(StaminaPoints - 8.f, 0.f, MaxStaminaPoints);
+	if (PlayerViewModel)
+	{
+		PlayerViewModel->SetCurrentStamina(StaminaPoints);
+	}
 }
 
 void ACaptureTheFlagCharacter::DebugReceiveDamage()

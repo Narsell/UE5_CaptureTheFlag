@@ -31,58 +31,46 @@ protected:
 
 protected:
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* HealthBar;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* CurrentHealthLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* MaxHealthLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* StaminaBar;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* CurrentStaminaLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* MaxStaminaLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamANameLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamBNameLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamAScoreLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamBScoreLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamAMaxScoreLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamBMaxScoreLabel;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* MatchTimerLabel;
 
 private:
-
-	/** Updates the current health values on the HUD with the NewHealth provided. */
-	void UpdateCurrentHealth(float NewHealth);
-
-	/** Updates the maximum health values on the HUD with the NewMaxHealth provided. */
-	void UpdateMaxHealth(float NewMaxHealth);
-
-	/** Updates the current health values on the HUD with the NewHealth provided. */
-	void UpdateCurrentStamina(float NewStamina);
-
-	/** Updates the maximum health values on the HUD with the NewMaxHealth provided. */
-	void UpdateMaxStamina(float NewMaxStamina);
 
 	/** Updates the team name labels on the HUD with the current names set on the Game State */
 	void UpdateTeamNames();
@@ -96,14 +84,6 @@ private:
 
 private:
 
-	float CurrentHealth = 0.f;
-	float MaxHealth = 0.f;
-
-	float CurrentStamina = 0.f;
-	float MaxStamina = 0.f;
-
-	ACaptureTheFlagCharacter* PlayerCharacter = nullptr;
-	ACTFPlayerState* PlayerState = nullptr;
 	ACTFGameState* GameState = nullptr;
 	ACTFGameMode* GameMode = nullptr;
 

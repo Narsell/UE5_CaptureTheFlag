@@ -2,13 +2,28 @@
 
 
 #include "CTFPlayerState.h"
+#include "PlayerViewModel.h"
 
 void ACTFPlayerState::ReceiveDamage(const float Amount)
 {
 	if (Amount <= 0.f) return;
 
 	CurrentHealth = FMath::Clamp(CurrentHealth - Amount, 0.f, MaxHealth);
-	OnCurrentHealthUpdateDelegate.ExecuteIfBound(CurrentHealth);
+
+	if (PlayerViewModel)
+	{
+		PlayerViewModel->SetCurrentHealth(CurrentHealth);
+	}
+}
+
+void ACTFPlayerState::SetPlayerViewModel(UPlayerViewModel* InPlayerViewModel)
+{
+	if (InPlayerViewModel)
+	{
+		PlayerViewModel = InPlayerViewModel;
+		PlayerViewModel->SetMaxHealth(MaxHealth);
+		PlayerViewModel->SetCurrentHealth(CurrentHealth);
+	}
 }
 
 void ACTFPlayerState::BeginPlay()

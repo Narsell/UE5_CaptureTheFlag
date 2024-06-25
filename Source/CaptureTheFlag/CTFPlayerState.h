@@ -8,6 +8,8 @@
 
 DECLARE_DELEGATE_OneParam(FOnHealthUpdateSignature, float NewHealth);
 
+class UPlayerViewModel;
+
 /**
  * 
  */
@@ -18,9 +20,6 @@ class CAPTURETHEFLAG_API ACTFPlayerState : public APlayerState
 
 public:
 
-	FOnHealthUpdateSignature OnCurrentHealthUpdateDelegate;
-	FOnHealthUpdateSignature OnMaxHealthUpdateDelegate;
-
 	void ReceiveDamage(const float Amount);
 
 	UFUNCTION(BlueprintCallable)
@@ -30,9 +29,11 @@ public:
 	float GetMaxHealth() const { return MaxHealth; };
 
 	UFUNCTION(BlueprintCallable)
-	bool IsFlagCarrier() const { return bIsFlagCarrier; };
+	bool IsFlagCarrier() const { return bIsFlagCarrier; }
 
-	void SetIsFlagCarrier(const bool IsFlagCarrier) { bIsFlagCarrier = IsFlagCarrier; };
+	void SetIsFlagCarrier(const bool IsFlagCarrier) { bIsFlagCarrier = IsFlagCarrier; }
+
+	void SetPlayerViewModel(UPlayerViewModel* InPlayerViewModel);
 
 protected:
 
@@ -48,5 +49,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Player)
 	bool bIsFlagCarrier = false;
+
+private:
+
+	UPlayerViewModel* PlayerViewModel = nullptr;
 	
 };
