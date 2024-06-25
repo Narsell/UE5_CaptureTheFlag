@@ -7,10 +7,10 @@
 #include "GameFramework/GameMode.h"
 #include "CTFGameMode.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnTeamScoreSignature, const ETeamId& TeamId);
+class UMatchViewModel;
 
 /**
- * 
+ *
  */
 UCLASS()
 class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
@@ -21,21 +21,24 @@ public:
 
 	ACTFGameMode();
 
-	FOnTeamScoreSignature OnTeamScoreDelegate;
-
+	/** Returns the required score to win */
 	int32 GetRequiredScoreToWin() const { return ScoreToWin; };
 
-	const FTimerHandle& GetMatchTimerHandle() const { return MatchTimerHandle; };
+	/** Returns the remainig seconds for the match to finish */
+	float GetRemainingMatchTime() const { return GetWorldTimerManager().GetTimerRemaining(MatchTimerHandle); }
 
 	/**
 	 * Registers a score by the team given by the TeamId.
-	 * This will also handle scenarios such as ties, wins, extra time, etc...
+	 * This will also handle scenarios such as ties, wins, extra time
 	 */
 	void OnTeamScored(const ETeamId& TeamId);
 
 protected:
 
 	virtual void BeginPlay() override;
+
+	/** Creates the viewmodel object */
+	void InitializeViewModel();
 
 	/** Required score to win */
 	UPROPERTY(EditAnywhere, Category=Rules)
@@ -55,11 +58,15 @@ private:
 
 private:
 
+	/** Match view model to update match status (timers, score, team name, color, etc) */
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
+	UMatchViewModel* MatchViewModel = nullptr;
+
 	/* Determines if an extra time has already been added to the time match once **/
 	bool bHasExtraTimeHappened = false;
 
-	ACTFGameState* GameState;
+	ACTFGameState* GameState = nullptr;
 
 	FTimerHandle MatchTimerHandle;
-	
+
 };

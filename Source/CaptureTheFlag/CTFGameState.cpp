@@ -15,9 +15,10 @@ const FTeam& ACTFGameState::GetTeam(const ETeamId& TeamId) const
 	return TeamId == ETeamId::A ? TeamA : TeamB;
 }
 
-void ACTFGameState::AddScoreToTeam(const ETeamId& TeamId)
+int32 ACTFGameState::AddScoreToTeam(const ETeamId& TeamId)
 {
 	FTeam& Team = TeamId == ETeamId::A ? TeamA : TeamB;
 	++Team.Score;
+	return Team.Score;
 }
 

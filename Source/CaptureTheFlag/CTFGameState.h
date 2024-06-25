@@ -26,11 +26,15 @@ struct FTeam {
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FColor Color = FColor::Magenta;
+
+	bool operator==(const FTeam& Other) {
+		return Name == Other.Name && Score == Other.Score && Color == Other.Color;
+	}
 };
 
 
 /**
- * 
+ *
  */
 UCLASS()
 class CAPTURETHEFLAG_API ACTFGameState : public AGameState
@@ -38,19 +42,19 @@ class CAPTURETHEFLAG_API ACTFGameState : public AGameState
 	GENERATED_BODY()
 
 public:
-	
+
 	ACTFGameState();
 
-	/** 
+	/**
 	 * Returns the information struct const reference to the team that matches the given ID.
 	 */
 	UFUNCTION(BlueprintCallable, Category=Teams)
 	const FTeam& GetTeam(const ETeamId& TeamId) const;
 
 	/**
-	 * Adds a score point to the team that matches the given ID.
+	 * Adds a score point to the team that matches the given ID and returns the new score.
 	 */
-	void AddScoreToTeam(const ETeamId& TeamId);
+	int32 AddScoreToTeam(const ETeamId& TeamId);
 
 protected:
 
@@ -60,5 +64,5 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Teams)
 	FTeam TeamB;
-	
+
 };

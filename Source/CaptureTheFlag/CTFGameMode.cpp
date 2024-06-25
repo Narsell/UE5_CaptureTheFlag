@@ -1,26 +1,42 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CTFGameMode.h"
-#include "Kismet/GameplayStatics.h" 
+#include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
+#include "MatchViewModel.h"
 
 ACTFGameMode::ACTFGameMode()
-	:
-	GameState(nullptr)
 {
 }
 
 void ACTFGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
 	GameState = Cast<ACTFGameState>(UGameplayStatics::GetGameState(this));
 
 	GetWorldTimerManager().SetTimer(MatchTimerHandle, this, &ACTFGameMode::MatchTimerEnd, MatchTimeSeconds, false);
+
+	InitializeViewModel();
+
+}
+
+void ACTFGameMode::InitializeViewModel()
+{
+	MatchViewModel = NewObject<UMatchViewModel>();
+	if (MatchViewModel)
+	{
+		MatchViewModel->Initialize(this, GameState);
+	}
 }
 
 void ACTFGameMode::MatchTimerEnd()
 {
+	if (!GameState)
+	{
+		return;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Match finished!"))
 
 	const FTeam& TeamA = GameState->GetTeam(ETeamId::A);
@@ -28,19 +44,23 @@ void ACTFGameMode::MatchTimerEnd()
 
 	const FTeam* WinnerTeam = nullptr;
 
-	if (TeamA.Score != TeamB.Score) {
+	if (TeamA.Score != TeamB.Score) 
+	{
 		WinnerTeam = &(TeamA.Score > TeamB.Score ? TeamA : TeamB);
 	}
-	else {
+	else
+	{
 
-		if (!bHasExtraTimeHappened) {
+		if (!bHasExtraTimeHappened)
+		{
 			// Call delegate on UI to show extend timer function
 			UE_LOG(LogTemp, Warning, TEXT("Tie. You have %f more seconds to sweep it!"), ExtraTimeSeconds)
 			GetWorldTimerManager().SetTimer(MatchTimerHandle, this, &ACTFGameMode::MatchTimerEnd, ExtraTimeSeconds, false);
 			bHasExtraTimeHappened = true;
 			return;
 		}
-		else {
+		else
+		{
 			// Determine winner by some other metric (most kills, most damage, etc...)
 			WinnerTeam = &TeamA;
 		}
@@ -56,11 +76,19 @@ void ACTFGameMode::OnTeamScored(const ETeamId& TeamId)
 {
 	ensure(GameState);
 
-	if (GameState && GetWorldTimerManager().IsTimerActive(MatchTimerHandle)) {
-		GameState->AddScoreToTeam(TeamId);
-		OnTeamScoreDelegate.ExecuteIfBound(TeamId);
+	if (GameState && GetWorldTimerManager().IsTimerActive(MatchTimerHandle))
+	{
+		const int32 NewScore = GameState->AddScoreToTeam(TeamId);
+
+		// Update view model
+		if (MatchViewModel)
+		{
+			MatchViewModel->SetTeamScore(TeamId, NewScore);
+		}
+
 		// If team scored while on extra time
-		if (bHasExtraTimeHappened) {
+		if (bHasExtraTimeHappened)
+		{
 			const FTeam& WinnerTeam = GameState->GetTeam(TeamId);
 			GetWorldTimerManager().ClearTimer(MatchTimerHandle);
 			UE_LOG(LogTemp, Warning, TEXT("Team %s won!"), *(WinnerTeam.Name.ToString()))

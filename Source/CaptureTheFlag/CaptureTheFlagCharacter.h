@@ -95,24 +95,24 @@ private:
 	/** Grabs a flag and fixes it to the player */
 	void GrabFlag(AFlag* Flag);
 
-	/** 
+	/**
 	 * Prepares the refences required to call the Blueprint Event 'SetTeamColorsEvent' 
 	 * Call on or after BeginPlay for it to work.
 	 */
 	void SetTeamColors();
-	
+
 	/** Delegate function call for component begin overlap */
 	UFUNCTION()
 	void OnOverlapFlag(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
-	
+
 	/** Team ID this player belongs to */
 	UPROPERTY(VisibleInstanceOnly, Category = Team)
-	ETeamId TeamId = ETeamId::A;
+	ETeamId TeamId = ETeamId::B;
 
 	/** Player viewmodel to update player stats such as health, stamina */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
 	UPlayerViewModel* PlayerViewModel;
 
 	/** Maximum stamina points the player can have */
@@ -151,7 +151,7 @@ private:
 	/** Timer Handle to stamina consumption timer */
 	FTimerHandle StaminaComsumptionTimer;
 
-	/** 
+	/**
 	 * Maximum speed the player can reach while running
 	 * Set by the movement component in BeginPlay so no need to initialize.
 	 */
