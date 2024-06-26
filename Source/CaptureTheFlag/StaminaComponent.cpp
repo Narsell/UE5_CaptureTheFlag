@@ -24,10 +24,6 @@ void UStaminaComponent::BeginPlay()
 	{
 		StartingStamina = MaxStamina;
 	}
-	if (CurrentStamina > StartingStamina)
-	{
-		CurrentStamina = StartingStamina;
-	}
 	CurrentStamina = StartingStamina;
 
 	GetWorld()->GetTimerManager().SetTimer(UpdateTimerHandle, this, &UStaminaComponent::UpdateStamina, StaminaUpdateRate, true);
@@ -35,11 +31,11 @@ void UStaminaComponent::BeginPlay()
 
 void UStaminaComponent::UpdateStamina()
 {
-	if(bIsSprinting && !FMath::IsNearlyZero(CurrentStamina))
+	if(bIsSprinting && HasStaminaLeft())
 	{
 		CurrentStamina = FMath::Clamp(CurrentStamina - UsageRate, 0.f, MaxStamina);
 	}
-	else if (!bIsSprinting && !FMath::IsNearlyEqual(CurrentStamina, MaxStamina))
+	else if (!bIsSprinting && CurrentStamina < MaxStamina)
 	{
 		CurrentStamina = FMath::Clamp(CurrentStamina + RegenerationRate, 0.f, MaxStamina);
 	}

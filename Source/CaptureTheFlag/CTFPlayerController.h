@@ -8,6 +8,7 @@
 
 class ACTFHud;
 class UInputAction;
+class ACaptureTheFlagCharacter;
 
 /**
  * 
@@ -23,11 +24,22 @@ protected:
 
 private:
 
-	/** HUD actor (non-umg one) pointer */
-	ACTFHud* HudActor = nullptr;
+	void DebugReceiveDamage();
+
+private:
+
 
 	/** Toggle Online Menu action */
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ToggleOnlineStatusPanelAction;
 
+	/** Debug action */
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* DebugAction_1 = nullptr;
+
+	/** Controlled player character pointer */
+	ACaptureTheFlagCharacter* PlayerCharacter = nullptr;
+
+	/** HUD actor (non-umg one) pointer */
+	ACTFHud* HudActor = nullptr;
 };

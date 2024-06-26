@@ -17,6 +17,7 @@ class AFlag;
 class ACTFPlayerState;
 class UPlayerViewModel;
 class UStaminaComponent;
+class UHealthComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -43,6 +44,9 @@ public:
 
 	/** Returns a pointer to the stamina component */
 	UStaminaComponent* GetStaminaComponent() const { return StaminaComponent; }
+
+	/** Returns a pointer to the health component */
+	UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
 	/** Returns the player viewmodel object pointer */
 	UPlayerViewModel* GetPlayerViewModel() const {	return PlayerViewModel;	}
@@ -136,6 +140,9 @@ private:
 	UPROPERTY(EditAnywhere, Category=Component)
 	UStaminaComponent* StaminaComponent;
 
+	UPROPERTY(EditAnywhere, Category=Component)
+	UHealthComponent* HealthComponent;
+
 	UPROPERTY(VisibleAnywhere, Category=Component)
 	USceneComponent* FlagSocket;
 
@@ -171,9 +178,6 @@ private:
 	/** SprintInput Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* DebugAction_1;
 
 	/** Console variable to enable/disable jumping */
 	static TAutoConsoleVariable<int32> CVarCanJump;

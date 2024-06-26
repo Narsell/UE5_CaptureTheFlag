@@ -3,19 +3,43 @@
 
 #include "CTFPlayerState.h"
 #include "PlayerViewModel.h"
+#include "CaptureTheFlagCharacter.h"
+#include "HealthComponent.h"
 
-void ACTFPlayerState::ReceiveDamage(const float Amount)
-{
-	if (Amount <= 0.f) return;
-
-	CurrentHealth = FMath::Clamp(CurrentHealth - Amount, 0.f, MaxHealth);
-
-}
 
 void ACTFPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentHealth = MaxHealth;
+	if (!GetPlayerController())
+	{
+		return;
+	}
 
+	ACaptureTheFlagCharacter* PlayerCharacter = Cast<ACaptureTheFlagCharacter>(GetPlayerController()->GetPawn());
+
+	if (PlayerCharacter)
+	{
+		PlayerHealthComponent = PlayerCharacter->GetHealthComponent();
+	}
+
+
+}
+
+float ACTFPlayerState::GetCurrentHealth() const
+{
+	if (PlayerHealthComponent)
+	{
+		return PlayerHealthComponent->GetCurrentHealth();
+	}
+	return 0.f;
+}
+
+float ACTFPlayerState::GetMaxHealth() const
+{
+	if (PlayerHealthComponent)
+	{
+		return PlayerHealthComponent->GetMaxHealth();
+	}
+	return 0.f;
 }

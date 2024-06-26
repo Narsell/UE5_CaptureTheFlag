@@ -21,7 +21,7 @@ class CAPTURETHEFLAG_API UPlayerViewModel : public UMVVMViewModelBase
 public:
 
 	/** Sets the initial state on the view based on the initial model state */
-	void Initialize(ACaptureTheFlagCharacter* InPlayerCharacter, ACTFPlayerState* InPlayerState);
+	void Initialize(ACaptureTheFlagCharacter* InPlayerCharacter);
 
 	/** Getters */
 	UFUNCTION(BlueprintPure, FieldNotify)
@@ -62,7 +62,5 @@ private:
 	float CurrentStamina;
 
 	ACaptureTheFlagCharacter* PlayerCharacter = nullptr;
-	UStaminaComponent* PlayerStaminaComp = nullptr;
-	ACTFPlayerState* PlayerState = nullptr;
 
 };

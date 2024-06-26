@@ -6,9 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "CTFPlayerState.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnHealthUpdateSignature, float NewHealth);
-
 class UPlayerViewModel;
+class UHealthComponent;
 
 /**
  * 
@@ -20,13 +19,11 @@ class CAPTURETHEFLAG_API ACTFPlayerState : public APlayerState
 
 public:
 
-	void ReceiveDamage(const float Amount);
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentHealth() const;
 
 	UFUNCTION(BlueprintCallable)
-	float GetCurrentHealth() const { return CurrentHealth; }
-
-	UFUNCTION(BlueprintCallable)
-	float GetMaxHealth() const { return MaxHealth; };
+	float GetMaxHealth() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsFlagCarrier() const { return bIsFlagCarrier; }
@@ -39,11 +36,7 @@ protected:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Player)
-	float MaxHealth = 100.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Player)
-	float CurrentHealth = MaxHealth;
+	UHealthComponent* PlayerHealthComponent = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Player)
 	bool bIsFlagCarrier = false;

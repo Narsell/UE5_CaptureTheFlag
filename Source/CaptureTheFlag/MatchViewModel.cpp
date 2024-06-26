@@ -23,6 +23,7 @@ void UMatchViewModel::Initialize(ACTFGameMode* InGameMode, ACTFGameState* InGame
 	}
 
 	FloatFormatOptions.MaximumFractionalDigits = 0;
+	FloatFormatOptions.RoundingMode = ERoundingMode::HalfToZero;
 }
 
 void UMatchViewModel::SetTeam(const ETeamId TeamId, const FTeam& NewTeam)

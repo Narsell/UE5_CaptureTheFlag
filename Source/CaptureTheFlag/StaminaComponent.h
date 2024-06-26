@@ -15,9 +15,9 @@ class CAPTURETHEFLAG_API UStaminaComponent : public UActorComponent
 
 public:
 
-	FOnStaminaUpdateSignature StaminaUpdateDelegate;
-
 	UStaminaComponent();
+
+	FOnStaminaUpdateSignature StaminaUpdateDelegate;
 
 	float GetCurrentStamina() const { return CurrentStamina; }
 

@@ -5,17 +5,30 @@
 #include "CTFHud.h"
 #include "InputActionValue.h"
 #include "EnhancedInputComponent.h"
+#include "CaptureTheFlagCharacter.h"
+#include "HealthComponent.h"
 
 void ACTFPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	HudActor = Cast<ACTFHud>(GetHUD());
 
-	if(!ToggleOnlineStatusPanelAction)
-		UE_LOG(LogTemp, Error, TEXT("Input action has not been set in the player controller blueprint"))
+	PlayerCharacter = Cast<ACaptureTheFlagCharacter>(GetPawn());
 
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
+
+	// Toggles online status menu
 	EnhancedInputComponent->BindAction(ToggleOnlineStatusPanelAction, ETriggerEvent::Triggered, HudActor, &ACTFHud::ToggleOnlineStatusPanelVisibility);
+	
+	// Debuging
+	EnhancedInputComponent->BindAction(DebugAction_1, ETriggerEvent::Triggered, this, &ACTFPlayerController::DebugReceiveDamage);
+}
 
+void ACTFPlayerController::DebugReceiveDamage()
+{
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->GetHealthComponent()->TakeDamage(15.f);
+	}
 }

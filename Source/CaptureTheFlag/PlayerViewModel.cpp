@@ -5,26 +5,26 @@
 #include "CaptureTheFlagCharacter.h"
 #include "CTFPlayerState.h"
 #include "StaminaComponent.h"
+#include "HealthComponent.h"
 
-void UPlayerViewModel::Initialize(ACaptureTheFlagCharacter* InPlayerCharacter, ACTFPlayerState* InPlayerState)
+void UPlayerViewModel::Initialize(ACaptureTheFlagCharacter* InPlayerCharacter)
 {
 	PlayerCharacter = InPlayerCharacter;
-	PlayerState = InPlayerState;
 
 	if (PlayerCharacter)
 	{
-		PlayerStaminaComp = PlayerCharacter->GetStaminaComponent();
+		UStaminaComponent* PlayerStaminaComponent = PlayerCharacter->GetStaminaComponent();
+		UHealthComponent* PlayerHealthComponent = PlayerCharacter->GetHealthComponent();
 
-		SetMaxStamina(PlayerStaminaComp->GetMaxStamina());
-		SetCurrentStamina(PlayerStaminaComp->GetCurrentStamina());
+		SetMaxStamina(PlayerStaminaComponent->GetMaxStamina());
+		SetCurrentStamina(PlayerStaminaComponent->GetCurrentStamina());
+		PlayerStaminaComponent->StaminaUpdateDelegate.AddUObject(this, &UPlayerViewModel::SetCurrentStamina);
 
-		PlayerStaminaComp->StaminaUpdateDelegate.AddUObject(this, &UPlayerViewModel::SetCurrentStamina);
+		SetMaxHealth(PlayerHealthComponent->GetMaxHealth());
+		SetCurrentHealth(PlayerHealthComponent->GetCurrentHealth());
+		PlayerHealthComponent->HealthUpdateDelegate.AddUObject(this, &UPlayerViewModel::SetCurrentHealth);
 	}
-	if(PlayerState)
-	{
-		SetMaxHealth(PlayerState->GetMaxHealth());
-		SetCurrentHealth(PlayerState->GetCurrentHealth());
-	}
+
 }
 
 float UPlayerViewModel::GetHealthPercent() const

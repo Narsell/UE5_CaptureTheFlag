@@ -16,6 +16,7 @@
 #include "TeamBase.h"
 #include "PlayerViewModel.h"
 #include "StaminaComponent.h"
+#include "HealthComponent.h"
 
 
 TAutoConsoleVariable<int32> ACaptureTheFlagCharacter::CVarCanJump(
@@ -34,6 +35,7 @@ ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	:
 	PlayerViewModel(NewObject<UPlayerViewModel>()),
 	StaminaComponent(CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"))),
+	HealthComponent(CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"))),
 	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
 	CameraBoom(CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"))),
 	FollowCamera(CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"))),
@@ -101,21 +103,7 @@ void ACaptureTheFlagCharacter::InitializeViewModel()
 		return;
 	}
 
-	PlayerViewModel->Initialize(this, PlayerState);
-}
-
-void ACaptureTheFlagCharacter::DebugReceiveDamage()
-{
-	if (!PlayerState)
-	{
-		return;
-	}
-
-	PlayerState->ReceiveDamage(15.f);
-	if (PlayerViewModel)
-	{
-		PlayerViewModel->SetCurrentHealth(PlayerState->GetCurrentHealth());
-	}
+	PlayerViewModel->Initialize(this);
 }
 
 void ACaptureTheFlagCharacter::SetSlowMovementSpeed(const bool ReduceMovementSpeed)
@@ -211,8 +199,6 @@ void ACaptureTheFlagCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		// Sprinting
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::SprintInput);
 
-		// Debuging
-		EnhancedInputComponent->BindAction(DebugAction_1, ETriggerEvent::Triggered, this, &ACaptureTheFlagCharacter::DebugReceiveDamage);
 	}
 	else
 	{
