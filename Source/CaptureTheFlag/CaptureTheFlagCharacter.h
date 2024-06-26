@@ -16,6 +16,7 @@ class UInputAction;
 class AFlag;
 class ACTFPlayerState;
 class UPlayerViewModel;
+class UStaminaComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -28,7 +29,7 @@ class ACaptureTheFlagCharacter : public ACharacter
 public:
 
 	ACaptureTheFlagCharacter();
-	
+
 	virtual void Tick(float DeltaTime) override;
 
 	/** Returns the team ID this player belongs to */
@@ -40,11 +41,8 @@ public:
 	/** Makes the player drop the flag in place */
 	void DropFlag();
 
-	/** Returns the current stamina */
-	float GetCurrentStamina() const { return StaminaPoints; }
-
-	/** Returns the maximum stamina */
-	float GetMaxStamina() const { return MaxStaminaPoints; }
+	/** Returns a pointer to the stamina component */
+	UStaminaComponent* GetStaminaComponent() const { return StaminaComponent; }
 
 	/** Returns the player viewmodel object pointer */
 	UPlayerViewModel* GetPlayerViewModel() const {	return PlayerViewModel;	}
@@ -64,12 +62,12 @@ protected:
 
 	/** Called for sprint input */
 	void SprintInput(const FInputActionValue& Value);
-			
+
 	virtual void Jump() override;
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 
@@ -81,12 +79,6 @@ private:
 
 	/** Initializes the player view model instance. */
 	void InitializeViewModel();
-
-	/** Regenerates a fixed amount of stamina points. */
-	void RegenerateStamina();
-
-	/** Consumes a fixed amount of stamina points */
-	void ConsumeStamina();
 
 	/** Receives a fixed amount of damage, used for debugging/testing purposes with an input action. */
 	void DebugReceiveDamage();
@@ -116,22 +108,6 @@ private:
 	/** Player viewmodel to update player stats such as health, stamina */
 	UPlayerViewModel* PlayerViewModel;
 
-	/** Maximum stamina points the player can have */
-	UPROPERTY(EditAnywhere, Category = Stamina)
-	float MaxStaminaPoints = 200.f;
-
-	/** Current stamina points */
-	UPROPERTY(EditInstanceOnly, Category = Stamina)
-	float StaminaPoints = MaxStaminaPoints;
-
-	/** Stamina regeneration rate */
-	UPROPERTY(EditAnywhere, Category = Stamina)
-	float StaminaRegenRate = 0.1f;
-
-	/** Stamina consumption rate */
-	UPROPERTY(EditAnywhere, Category = Stamina)
-	float StaminaConsumptionRate = 0.1f;
-
 	/** Maximum speed the player can reach while sprinting */
 	UPROPERTY(EditAnywhere, Category = Movement)
 	float MaxSprintSpeed = 600.f;
@@ -146,12 +122,6 @@ private:
 	/** Pointer to a potential flag the player could carry */
 	AFlag* ActiveFlag = nullptr;
 
-	/** Timer Handle to stamina regeneration timer */
-	FTimerHandle StaminaRegenTimer;
-
-	/** Timer Handle to stamina consumption timer */
-	FTimerHandle StaminaComsumptionTimer;
-
 	/**
 	 * Maximum speed the player can reach while running
 	 * Set by the movement component in BeginPlay so no need to initialize.
@@ -163,7 +133,10 @@ private:
 
 	/* COMPONENT REFERENCES */
 
-	UPROPERTY(VisibleAnywhere, Category = Flag)
+	UPROPERTY(EditAnywhere, Category=Component)
+	UStaminaComponent* StaminaComponent;
+
+	UPROPERTY(VisibleAnywhere, Category=Component)
 	USceneComponent* FlagSocket;
 
 	/** Camera boom positioning the camera behind the character */

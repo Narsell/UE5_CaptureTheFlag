@@ -15,6 +15,7 @@
 #include "SpawnZone.h"
 #include "TeamBase.h"
 #include "PlayerViewModel.h"
+#include "StaminaComponent.h"
 
 
 TAutoConsoleVariable<int32> ACaptureTheFlagCharacter::CVarCanJump(
@@ -32,6 +33,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	:
 	PlayerViewModel(NewObject<UPlayerViewModel>()),
+	StaminaComponent(CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"))),
 	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
 	CameraBoom(CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"))),
 	FollowCamera(CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"))),
@@ -84,9 +86,6 @@ void ACaptureTheFlagCharacter::BeginPlay()
 	{
 		PlayerState = Controller->GetPlayerState<ACTFPlayerState>();
 	}
-	
-	//Start stamina regeneration timer
-	GetWorldTimerManager().SetTimer(StaminaRegenTimer, this, &ACaptureTheFlagCharacter::RegenerateStamina, StaminaRegenRate, true, 0.f);
 
 	//Sets the player mesh to reflect the assigned team ID colors
 	SetTeamColors();
@@ -105,26 +104,13 @@ void ACaptureTheFlagCharacter::InitializeViewModel()
 	PlayerViewModel->Initialize(this, PlayerState);
 }
 
-void ACaptureTheFlagCharacter::RegenerateStamina()
-{
-	StaminaPoints = FMath::Clamp(StaminaPoints + 5.f, 0.f, MaxStaminaPoints);
-	if (PlayerViewModel)
-	{
-		PlayerViewModel->SetCurrentStamina(StaminaPoints);
-	}
-}
-
-void ACaptureTheFlagCharacter::ConsumeStamina()
-{
-	StaminaPoints = FMath::Clamp(StaminaPoints - 8.f, 0.f, MaxStaminaPoints);
-	if (PlayerViewModel)
-	{
-		PlayerViewModel->SetCurrentStamina(StaminaPoints);
-	}
-}
-
 void ACaptureTheFlagCharacter::DebugReceiveDamage()
 {
+	if (!PlayerState)
+	{
+		return;
+	}
+
 	PlayerState->ReceiveDamage(15.f);
 	if (PlayerViewModel)
 	{
@@ -153,13 +139,12 @@ void ACaptureTheFlagCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	const float bHasStamina = StaminaPoints > 0.f;
 
-	if (bIsSprintInputPressed && bHasStamina) {
+	if (StaminaComponent->IsSprinting() && StaminaComponent->HasStaminaLeft()) {
 		MovementComponent->MaxWalkSpeed = MaxSprintSpeed;
 	}
 	else {
-		MovementComponent->MaxWalkSpeed = MaxRunningSpeed;	
+		MovementComponent->MaxWalkSpeed = MaxRunningSpeed;
 	}
 
 	if (ActiveFlag) {
@@ -248,11 +233,11 @@ void ACaptureTheFlagCharacter::Move(const FInputActionValue& Value)
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
+
+		// get right vector
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
+		// add movement
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -274,27 +259,7 @@ void ACaptureTheFlagCharacter::Look(const FInputActionValue& Value)
 void ACaptureTheFlagCharacter::SprintInput(const FInputActionValue& Value)
 {
 	bIsSprintInputPressed = Value.Get<bool>();
-	if (bIsSprintInputPressed) {
-
-		if (GetWorldTimerManager().IsTimerActive(StaminaRegenTimer)) {
-			GetWorldTimerManager().ClearTimer(StaminaRegenTimer);
-		}
-
-		if (!GetWorldTimerManager().IsTimerActive(StaminaComsumptionTimer)) {
-			GetWorldTimerManager().SetTimer(StaminaComsumptionTimer, this, &ACaptureTheFlagCharacter::ConsumeStamina, StaminaConsumptionRate, true, 0.f);
-		}
-	}
-	else {
-
-		if (!GetWorldTimerManager().IsTimerActive(StaminaRegenTimer)) {
-			GetWorldTimerManager().SetTimer(StaminaRegenTimer, this, &ACaptureTheFlagCharacter::RegenerateStamina, StaminaRegenRate, true, 0.f);
-		}
-
-		if (GetWorldTimerManager().IsTimerActive(StaminaComsumptionTimer)) {
-			GetWorldTimerManager().ClearTimer(StaminaComsumptionTimer);
-		}
-
-	}
+	StaminaComponent->SetIsSprinting(bIsSprintInputPressed);
 }
 
 void ACaptureTheFlagCharacter::Jump()

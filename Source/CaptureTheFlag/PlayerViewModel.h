@@ -8,8 +8,10 @@
 
 class ACaptureTheFlagCharacter;
 class ACTFPlayerState;
+class UStaminaComponent;
+
 /**
- * 
+ *
  */
 UCLASS()
 class CAPTURETHEFLAG_API UPlayerViewModel : public UMVVMViewModelBase
@@ -46,11 +48,13 @@ public:
 
 	void SetCurrentHealth(float NewCurrentHealth);
 
+private:
+
 	void SetMaxStamina(float NewMaxStamina);
 
-	void SetCurrentStamina(float NewCurrentStamina);
+	void SetCurrentStamina(float Stamina);
 
-protected:
+private:
 
 	float MaxHealth;
 	float CurrentHealth;
@@ -58,6 +62,7 @@ protected:
 	float CurrentStamina;
 
 	ACaptureTheFlagCharacter* PlayerCharacter = nullptr;
+	UStaminaComponent* PlayerStaminaComp = nullptr;
 	ACTFPlayerState* PlayerState = nullptr;
-		
+
 };

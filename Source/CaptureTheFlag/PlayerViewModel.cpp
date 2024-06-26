@@ -4,6 +4,7 @@
 #include "PlayerViewModel.h"
 #include "CaptureTheFlagCharacter.h"
 #include "CTFPlayerState.h"
+#include "StaminaComponent.h"
 
 void UPlayerViewModel::Initialize(ACaptureTheFlagCharacter* InPlayerCharacter, ACTFPlayerState* InPlayerState)
 {
@@ -12,8 +13,12 @@ void UPlayerViewModel::Initialize(ACaptureTheFlagCharacter* InPlayerCharacter, A
 
 	if (PlayerCharacter)
 	{
-		SetMaxStamina(PlayerCharacter->GetMaxStamina());
-		SetCurrentStamina(PlayerCharacter->GetCurrentStamina());
+		PlayerStaminaComp = PlayerCharacter->GetStaminaComponent();
+
+		SetMaxStamina(PlayerStaminaComp->GetMaxStamina());
+		SetCurrentStamina(PlayerStaminaComp->GetCurrentStamina());
+
+		PlayerStaminaComp->StaminaUpdateDelegate.AddUObject(this, &UPlayerViewModel::SetCurrentStamina);
 	}
 	if(PlayerState)
 	{
@@ -24,51 +29,65 @@ void UPlayerViewModel::Initialize(ACaptureTheFlagCharacter* InPlayerCharacter, A
 
 float UPlayerViewModel::GetHealthPercent() const
 {
-	if (MaxHealth == 0.f) return 0.f;
-
-	return CurrentHealth / MaxHealth;
+	if (MaxHealth > 0.f)
+	{
+		return CurrentHealth / MaxHealth;
+	}
+	return 0.f;
 }
 
 float UPlayerViewModel::GetStaminaPercent() const
 {
-	if (MaxStamina == 0.f) return 0;
-
-	return CurrentStamina / MaxStamina;
+	if (MaxStamina > 0.f)
+	{
+		return CurrentStamina / MaxStamina;
+	}
+	return 0.f;
 }
 
 void UPlayerViewModel::SetMaxHealth(float NewMaxHealth)
 {
-	MaxHealth = NewMaxHealth;
+	if (MaxHealth != NewMaxHealth)
+	{
+		MaxHealth = NewMaxHealth;
 
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetMaxHealth);
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetHealthPercent);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetMaxHealth);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetHealthPercent);
+	}
 
 }
 
 void UPlayerViewModel::SetCurrentHealth(float NewCurrentHealth)
 {
-	CurrentHealth = NewCurrentHealth;
-	
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetCurrentHealth);
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetHealthPercent);
+	if (CurrentHealth != NewCurrentHealth)
+	{
+		CurrentHealth = NewCurrentHealth;
+
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetCurrentHealth);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetHealthPercent);
+	}
 
 }
 
 void UPlayerViewModel::SetMaxStamina(float NewMaxStamina)
 {
-	MaxStamina = NewMaxStamina;
+	if (MaxStamina != NewMaxStamina)
+	{
+		MaxStamina = NewMaxStamina;
 
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetMaxStamina);
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetStaminaPercent);
-	
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetMaxStamina);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetStaminaPercent);
+	}
+
 }
 
 void UPlayerViewModel::SetCurrentStamina(float NewCurrentStamina)
 {
-	CurrentStamina = NewCurrentStamina;
+	if (CurrentStamina != NewCurrentStamina)
+	{
+		CurrentStamina = NewCurrentStamina;
 
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetCurrentStamina);
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetStaminaPercent);
-
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetCurrentStamina);
+		UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetStaminaPercent);
+	}
 }
-
