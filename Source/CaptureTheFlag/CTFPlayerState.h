@@ -33,8 +33,6 @@ public:
 
 	void SetIsFlagCarrier(const bool IsFlagCarrier) { bIsFlagCarrier = IsFlagCarrier; }
 
-	void SetPlayerViewModel(UPlayerViewModel* InPlayerViewModel);
-
 protected:
 
 	virtual void BeginPlay() override;
@@ -50,8 +48,4 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Player)
 	bool bIsFlagCarrier = false;
 
-private:
-
-	UPlayerViewModel* PlayerViewModel = nullptr;
-	
 };

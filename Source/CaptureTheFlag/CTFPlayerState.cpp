@@ -10,20 +10,6 @@ void ACTFPlayerState::ReceiveDamage(const float Amount)
 
 	CurrentHealth = FMath::Clamp(CurrentHealth - Amount, 0.f, MaxHealth);
 
-	if (PlayerViewModel)
-	{
-		PlayerViewModel->SetCurrentHealth(CurrentHealth);
-	}
-}
-
-void ACTFPlayerState::SetPlayerViewModel(UPlayerViewModel* InPlayerViewModel)
-{
-	if (InPlayerViewModel)
-	{
-		PlayerViewModel = InPlayerViewModel;
-		PlayerViewModel->SetMaxHealth(MaxHealth);
-		PlayerViewModel->SetCurrentHealth(CurrentHealth);
-	}
 }
 
 void ACTFPlayerState::BeginPlay()

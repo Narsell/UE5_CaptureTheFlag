@@ -5,6 +5,9 @@
 #include "PlayerHud.h"
 #include "PlayerEntryTooltip.h"
 #include "OnlineStatusPanel.h"
+#include "CaptureTheFlagCharacter.h"
+#include "CTFGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 void ACTFHud::BeginPlay()
 {
@@ -23,6 +26,7 @@ void ACTFHud::BeginPlay()
 	if (PlayerHud)
 	{
 		PlayerHud->AddToViewport();
+		SetPlayerHudViewModels();
 	}
 
 	OnlineStatusPanel = CreateWidget<UOnlineStatusPanel>(PlayerController, OnlineStatusPanelClass);
@@ -45,5 +49,21 @@ void ACTFHud::ToggleOnlineStatusPanelVisibility()
 	if (OnlineStatusPanel)
 	{
 		OnlineStatusPanel->TogglePanelVisibility();
+	}
+}
+
+void ACTFHud::SetPlayerHudViewModels()
+{
+	if (ACaptureTheFlagCharacter* PlayerCharacter = Cast<ACaptureTheFlagCharacter>(PlayerController->GetPawn()); PlayerCharacter)
+	{
+		const UPlayerViewModel* PlayerViewModel = PlayerCharacter->GetPlayerViewModel();
+		PlayerHud->SetPlayerViewModelObject(PlayerViewModel);
+	}
+
+	if (ACTFGameMode* GameMode = Cast<ACTFGameMode>(UGameplayStatics::GetGameMode(this)); GameMode)
+	{
+		const UMatchViewModel* MatchViewModel = GameMode->GetMatchViewModel();
+		PlayerHud->SetMatchViewModelObject(MatchViewModel);
+
 	}
 }

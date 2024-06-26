@@ -6,6 +6,8 @@
 #include "MVVMViewModelBase.h"
 #include "PlayerViewModel.generated.h"
 
+class ACaptureTheFlagCharacter;
+class ACTFPlayerState;
 /**
  * 
  */
@@ -16,15 +18,21 @@ class CAPTURETHEFLAG_API UPlayerViewModel : public UMVVMViewModelBase
 
 public:
 
+	/** Sets the initial state on the view based on the initial model state */
+	void Initialize(ACaptureTheFlagCharacter* InPlayerCharacter, ACTFPlayerState* InPlayerState);
+
 	/** Getters */
+	UFUNCTION(BlueprintPure, FieldNotify)
+	FText GetMaxHealth() const { return FText::AsNumber(MaxHealth); }
 
-	float GetMaxHealth() const;
+	UFUNCTION(BlueprintPure, FieldNotify)
+	FText GetCurrentHealth() const { return FText::AsNumber(CurrentHealth); }
 
-	float GetCurrentHealth() const;
+	UFUNCTION(BlueprintPure, FieldNotify)
+	FText GetMaxStamina() const { return FText::AsNumber(MaxStamina); }
 
-	float GetMaxStamina() const;
-
-	float GetCurrentStamina() const;
+	UFUNCTION(BlueprintPure, FieldNotify)
+	FText GetCurrentStamina() const { return FText::AsNumber(CurrentStamina); }
 
 	UFUNCTION(BlueprintPure, FieldNotify)
 	float GetHealthPercent() const;
@@ -44,17 +52,12 @@ public:
 
 protected:
 
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter)
 	float MaxHealth;
-
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter)
 	float CurrentHealth;
-
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter)
 	float MaxStamina;
-
-	UPROPERTY(BlueprintReadOnly, FieldNotify, Getter, Setter)
 	float CurrentStamina;
 
-	
+	ACaptureTheFlagCharacter* PlayerCharacter = nullptr;
+	ACTFPlayerState* PlayerState = nullptr;
+		
 };

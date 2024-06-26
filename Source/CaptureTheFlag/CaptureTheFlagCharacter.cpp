@@ -31,6 +31,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	:
+	PlayerViewModel(NewObject<UPlayerViewModel>()),
 	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
 	CameraBoom(CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"))),
 	FollowCamera(CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"))),
@@ -62,43 +63,26 @@ ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	FlagSocket->SetupAttachment(RootComponent);
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACaptureTheFlagCharacter::OnOverlapFlag);
-
 }
 
-void ACaptureTheFlagCharacter::InitializeViewModel()
-{
-	PlayerViewModel = NewObject<UPlayerViewModel>();
-	if (PlayerViewModel) {
-		PlayerViewModel->SetMaxStamina(MaxStaminaPoints);
-		PlayerViewModel->SetCurrentStamina(StaminaPoints);
-	}
-	else {
-		UE_LOG(LogTemp, Error, TEXT("Failed to create a UPlayerViewModel instance"))
-	}
-}
 
 void ACaptureTheFlagCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		//Add Input Mapping Context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-
 	}
 
 	//Get player state reference and set viewmodel ptr
 	if (Controller)
 	{
 		PlayerState = Controller->GetPlayerState<ACTFPlayerState>();
-		if (PlayerState)
-		{
-			PlayerState->SetPlayerViewModel(PlayerViewModel);
-		}
 	}
 	
 	//Start stamina regeneration timer
@@ -106,6 +90,19 @@ void ACaptureTheFlagCharacter::BeginPlay()
 
 	//Sets the player mesh to reflect the assigned team ID colors
 	SetTeamColors();
+
+	InitializeViewModel();
+}
+
+void ACaptureTheFlagCharacter::InitializeViewModel()
+{
+	if (!PlayerViewModel)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Player viewmodel failed at creation."));
+		return;
+	}
+
+	PlayerViewModel->Initialize(this, PlayerState);
 }
 
 void ACaptureTheFlagCharacter::RegenerateStamina()
@@ -129,6 +126,10 @@ void ACaptureTheFlagCharacter::ConsumeStamina()
 void ACaptureTheFlagCharacter::DebugReceiveDamage()
 {
 	PlayerState->ReceiveDamage(15.f);
+	if (PlayerViewModel)
+	{
+		PlayerViewModel->SetCurrentHealth(PlayerState->GetCurrentHealth());
+	}
 }
 
 void ACaptureTheFlagCharacter::SetSlowMovementSpeed(const bool ReduceMovementSpeed)

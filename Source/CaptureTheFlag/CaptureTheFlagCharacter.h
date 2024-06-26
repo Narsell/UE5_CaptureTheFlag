@@ -8,13 +8,13 @@
 #include "Logging/LogMacros.h"
 #include "CaptureTheFlagCharacter.generated.h"
 
+struct FInputActionValue;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 class AFlag;
 class ACTFPlayerState;
-struct FInputActionValue;
 class UPlayerViewModel;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -46,16 +46,15 @@ public:
 	/** Returns the maximum stamina */
 	float GetMaxStamina() const { return MaxStaminaPoints; }
 
+	/** Returns the player viewmodel object pointer */
+	UPlayerViewModel* GetPlayerViewModel() const {	return PlayerViewModel;	}
+
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 protected:
-
-	/** Initializes the player view model instance. Call this in the child BP constructor. */
-	UFUNCTION(BlueprintCallable, Category=Initialization)
-	void InitializeViewModel();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -79,6 +78,9 @@ protected:
 	void SetTeamColorsEvent(ETeamId InTeamId);
 
 private:
+
+	/** Initializes the player view model instance. */
+	void InitializeViewModel();
 
 	/** Regenerates a fixed amount of stamina points. */
 	void RegenerateStamina();
@@ -112,7 +114,6 @@ private:
 	ETeamId TeamId = ETeamId::B;
 
 	/** Player viewmodel to update player stats such as health, stamina */
-	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
 	UPlayerViewModel* PlayerViewModel;
 
 	/** Maximum stamina points the player can have */

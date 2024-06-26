@@ -33,6 +33,9 @@ public:
 	 */
 	void OnTeamScored(const ETeamId& TeamId);
 
+	/** Returns the match viewmodel object pointer */
+	UMatchViewModel* GetMatchViewModel() const { return MatchViewModel; }
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -59,8 +62,7 @@ private:
 private:
 
 	/** Match view model to update match status (timers, score, team name, color, etc) */
-	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
-	UMatchViewModel* MatchViewModel = nullptr;
+	UMatchViewModel* MatchViewModel;
 
 	/* Determines if an extra time has already been added to the time match once **/
 	bool bHasExtraTimeHappened = false;

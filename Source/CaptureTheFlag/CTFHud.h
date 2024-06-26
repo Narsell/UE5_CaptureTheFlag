@@ -31,7 +31,12 @@ public:
 	void ToggleOnlineStatusPanelVisibility();
 
 private:
-	
+
+	/** Sets the necessary view-models onto the player hud widget */
+	void SetPlayerHudViewModels();
+
+private:
+
 	/** Player UMG widget HUD class */
 	UPROPERTY(EditDefaultsOnly, Category = Widget)
 	TSubclassOf<UPlayerHud> PlayerHudClass;
@@ -51,7 +56,7 @@ private:
 	/** Pointer to Player HUD widget */
 	UPROPERTY()
 	UPlayerHud* PlayerHud = nullptr;
-	
+
 	/** Pointer to Online Status Panel widget */
 	UPROPERTY()
 	UOnlineStatusPanel* OnlineStatusPanel = nullptr;
@@ -59,7 +64,7 @@ private:
 	/** Pointer to Player Entry tooltip widget */
 	UPROPERTY()
 	UPlayerEntryTooltip* PlayerEntryTooltip = nullptr;
-	
+
 	/** Pointer to owning Player Controller */
 	APlayerController* PlayerController = nullptr;
 };

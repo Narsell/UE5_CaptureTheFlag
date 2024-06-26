@@ -8,6 +8,8 @@
 #include "PlayerHud.generated.h"
 
 class ACaptureTheFlagCharacter;
+class UMatchViewModel;
+class UPlayerViewModel;
 class ACTFPlayerState;
 class ACTFGameMode;
 class UProgressBar;
@@ -22,6 +24,14 @@ class CAPTURETHEFLAG_API UPlayerHud : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	/** Blueprint event that gets fired when the match view-model is ready to be set into the widget */
+	UFUNCTION(BlueprintImplementableEvent, Category=Viewmodel)
+	void SetMatchViewModelObject(const UMatchViewModel* InMatchViewModel);
+	
+	/** Blueprint event that gets fired when the player view-model is ready to be set into the widget */
+	UFUNCTION(BlueprintImplementableEvent, Category=Viewmodel)
+	void SetPlayerViewModelObject(const UPlayerViewModel* InPlayerViewModel);
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -88,5 +98,5 @@ private:
 	ACTFGameMode* GameMode = nullptr;
 
 	FNumberFormattingOptions FloatFormatOptions;
-	
+
 };

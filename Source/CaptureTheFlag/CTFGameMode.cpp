@@ -6,6 +6,8 @@
 #include "MatchViewModel.h"
 
 ACTFGameMode::ACTFGameMode()
+	:
+	MatchViewModel(NewObject<UMatchViewModel>())
 {
 }
 
@@ -23,11 +25,12 @@ void ACTFGameMode::BeginPlay()
 
 void ACTFGameMode::InitializeViewModel()
 {
-	MatchViewModel = NewObject<UMatchViewModel>();
-	if (MatchViewModel)
+	if (!MatchViewModel)
 	{
-		MatchViewModel->Initialize(this, GameState);
+		UE_LOG(LogTemp, Error, TEXT("Match viewmodel failed at creation."));
+		return;
 	}
+	MatchViewModel->Initialize(this, GameState);
 }
 
 void ACTFGameMode::MatchTimerEnd()

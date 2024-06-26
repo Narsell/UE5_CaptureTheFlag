@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CTFGameState.h"
-#include "CTFGameMode.h"
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
 #include "MatchViewModel.generated.h"
 
+class ACTFGameMode;
 /**
  *
  */
@@ -19,7 +19,7 @@ class CAPTURETHEFLAG_API UMatchViewModel : public UMVVMViewModelBase
 public:
 
 	/** Sets the initial state on the view based on the initial model state */
-	void Initialize(ACTFGameMode* GameMode, ACTFGameState* GameState);
+	void Initialize(ACTFGameMode* InGameMode, ACTFGameState* InGameState);
 
 	UFUNCTION(BlueprintPure, FieldNotify)
 	FText GetTeamAName() const { return FText::FromName(TeamA.Name); }

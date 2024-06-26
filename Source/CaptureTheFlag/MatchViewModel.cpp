@@ -2,6 +2,8 @@
 
 #include "MatchViewModel.h"
 #include "TimerManager.h"
+#include "CTFGameMode.h"
+
 
 void UMatchViewModel::Initialize(ACTFGameMode* InGameMode, ACTFGameState* InGameState)
 {
@@ -108,6 +110,9 @@ void UMatchViewModel::OnUpdateMatchTimer()
 {
 	if (GameMode)
 	{
-		SetMatchRemainingTime(GameMode->GetRemainingMatchTime());
+		const float RemainingTime = GameMode->GetRemainingMatchTime();
+		if (RemainingTime >= 0.f) {
+			SetMatchRemainingTime(RemainingTime);
+		}
 	}
 }
