@@ -8,11 +8,25 @@
 void UPlayerListPanel::AddPlayerEntry(UObject* Data)
 {
 	PlayerListView->AddItem(Data);
+	DataObjectList.Add(Data);
+	++PlayerListCount;
+	UpdatePlayerListCountLabel();
+}
+
+void UPlayerListPanel::RemovePlayerEntry(UObject* Data)
+{
+	if (DataObjectList.Contains(Data))
+	{
+		PlayerListView->RemoveItem(Data);
+		DataObjectList.Remove(Data);
+		--PlayerListCount;
+		UpdatePlayerListCountLabel();
+	}
 }
 
 void UPlayerListPanel::SetPanelType(EPlayerListPanelType NewPanelType)
 {
-	PanelType = NewPanelType; 
+	PanelType = NewPanelType;
 	NativePreConstruct();
 }
 
@@ -20,7 +34,7 @@ void UPlayerListPanel::NativePreConstruct()
 {
 
 	FString TitleText = PanelType == EPlayerListPanelType::ONLINE ? FString("ONLINE") : FString("OFFLINE");
-	if (!CustomTitle.IsEmpty()) 
+	if (!CustomTitle.IsEmpty())
 	{
 		TitleText = CustomTitle;
 	}
@@ -40,4 +54,9 @@ void UPlayerListPanel::ToggleListViewCollapse()
 	PlayerListView->SetVisibility(NewVisibility);
 
 	CollapseButton->SetRenderTransformAngle(CollapseButton->GetRenderTransformAngle() + 180.f);
+}
+
+void UPlayerListPanel::UpdatePlayerListCountLabel()
+{
+	PlayerListCountLabel->SetText(FText::AsNumber(PlayerListCount));
 }

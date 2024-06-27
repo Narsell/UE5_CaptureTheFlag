@@ -3,13 +3,13 @@
 
 #include "PlayerViewModel.h"
 #include "CaptureTheFlagCharacter.h"
-#include "CTFPlayerState.h"
 #include "StaminaComponent.h"
 #include "HealthComponent.h"
+#include "CTFHud.h"
 
-void UPlayerViewModel::Initialize(ACaptureTheFlagCharacter* InPlayerCharacter)
+void UPlayerViewModel::Initialize(const ACTFHud* Hud)
 {
-	PlayerCharacter = InPlayerCharacter;
+	PlayerCharacter = Cast<ACaptureTheFlagCharacter>(Hud->GetOwningPawn());
 
 	if (PlayerCharacter)
 	{

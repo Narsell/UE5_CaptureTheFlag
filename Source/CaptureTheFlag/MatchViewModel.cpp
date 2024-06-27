@@ -3,17 +3,19 @@
 #include "MatchViewModel.h"
 #include "TimerManager.h"
 #include "CTFGameMode.h"
+#include "CTFHud.h"
+#include "Kismet/GameplayStatics.h"
 
-
-void UMatchViewModel::Initialize(ACTFGameMode* InGameMode, ACTFGameState* InGameState)
+void UMatchViewModel::Initialize(const ACTFHud* Hud)
 {
-	GameMode = InGameMode;
-	GameState = InGameState;
+	GameMode = Cast<ACTFGameMode>(UGameplayStatics::GetGameMode(Hud));
+	GameState = Cast<ACTFGameState>(UGameplayStatics::GetGameState(Hud));
 
 	if (GameMode)
 	{
 		SetMatchRemainingTime(GameMode->GetRemainingMatchTime());
 		SetMaxTeamScore(GameMode->GetRequiredScoreToWin());
+		GameMode->TeamScoreDelegate.AddDynamic(this, &UMatchViewModel::SetTeamScore);
 		GameMode->GetWorldTimerManager().SetTimer(MatchTimerUpdateHandle, this, &UMatchViewModel::OnUpdateMatchTimer, 1.f, true);
 	}
 	if (GameState)

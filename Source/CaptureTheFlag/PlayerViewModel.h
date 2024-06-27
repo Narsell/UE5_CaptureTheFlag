@@ -8,7 +8,7 @@
 
 class ACaptureTheFlagCharacter;
 class ACTFPlayerState;
-class UStaminaComponent;
+class ACTFHud;
 
 /**
  *
@@ -21,7 +21,7 @@ class CAPTURETHEFLAG_API UPlayerViewModel : public UMVVMViewModelBase
 public:
 
 	/** Sets the initial state on the view based on the initial model state */
-	void Initialize(ACaptureTheFlagCharacter* InPlayerCharacter);
+	void Initialize(const ACTFHud* Hud);
 
 	/** Getters */
 	UFUNCTION(BlueprintPure, FieldNotify)

@@ -48,9 +48,6 @@ public:
 	/** Returns a pointer to the health component */
 	UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
-	/** Returns the player viewmodel object pointer */
-	UPlayerViewModel* GetPlayerViewModel() const {	return PlayerViewModel;	}
-
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
@@ -81,12 +78,6 @@ protected:
 
 private:
 
-	/** Initializes the player view model instance. */
-	void InitializeViewModel();
-
-	/** Receives a fixed amount of damage, used for debugging/testing purposes with an input action. */
-	void DebugReceiveDamage();
-
 	/** Sets the movement speed to be slow (flag carrier) or normal, depending on the input parameter. */
 	void SetSlowMovementSpeed(const bool ReduceMovementSpeed);
 
@@ -108,9 +99,6 @@ private:
 	/** Team ID this player belongs to */
 	UPROPERTY(VisibleInstanceOnly, Category = Team)
 	ETeamId TeamId = ETeamId::B;
-
-	/** Player viewmodel to update player stats such as health, stamina */
-	UPlayerViewModel* PlayerViewModel;
 
 	/** Maximum speed the player can reach while sprinting */
 	UPROPERTY(EditAnywhere, Category = Movement)

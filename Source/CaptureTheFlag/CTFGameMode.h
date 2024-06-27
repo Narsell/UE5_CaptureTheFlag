@@ -9,6 +9,8 @@
 
 class UMatchViewModel;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamScoreSignature, ETeamId, TeamId, int32, NewScore);
+
 /**
  *
  */
@@ -20,6 +22,9 @@ class CAPTURETHEFLAG_API ACTFGameMode : public AGameMode
 public:
 
 	ACTFGameMode();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTeamScoreSignature TeamScoreDelegate;
 
 	/** Returns the required score to win */
 	int32 GetRequiredScoreToWin() const { return ScoreToWin; };
@@ -33,15 +38,9 @@ public:
 	 */
 	void OnTeamScored(const ETeamId& TeamId);
 
-	/** Returns the match viewmodel object pointer */
-	UMatchViewModel* GetMatchViewModel() const { return MatchViewModel; }
-
 protected:
 
 	virtual void BeginPlay() override;
-
-	/** Creates the viewmodel object */
-	void InitializeViewModel();
 
 	/** Required score to win */
 	UPROPERTY(EditAnywhere, Category=Rules)
@@ -60,9 +59,6 @@ private:
 	void MatchTimerEnd();
 
 private:
-
-	/** Match view model to update match status (timers, score, team name, color, etc) */
-	UMatchViewModel* MatchViewModel;
 
 	/* Determines if an extra time has already been added to the time match once **/
 	bool bHasExtraTimeHappened = false;

@@ -9,7 +9,8 @@
 class UVerticalBox;
 class UButton;
 class UPlayerListPanel;
-class UDataTable;
+class UPlayerOnlineDataHolder;
+class UOnlineStatusViewModel;
 
 /**
  * 
@@ -18,7 +19,18 @@ UCLASS(Abstract)
 class CAPTURETHEFLAG_API UOnlineStatusPanel : public UUserWidget
 {
 	GENERATED_BODY()
+
 public:
+
+	/** Blueprint event that gets fired when the online status view-model is ready to be set into the widget */
+	UFUNCTION(BlueprintImplementableEvent, Category = Viewmodel)
+	void SetOnlineStatusViewModelObject(const UOnlineStatusViewModel* InOnlineStatusViewModel);
+
+	/** Updates a player online status (changes its list view parent widget) */
+	void UpdatePlayerStatus(UPlayerOnlineDataHolder* PlayerDataObject);
+
+	/** Fills in the Player List widgets with the data obtained from the Data Table */
+	void InitializePlayerList(const TArray<UPlayerOnlineDataHolder*>& PlayerObjectDataList);
 
 	/** Toggles the panel visibility and configures the correct interaction mode */
 	void TogglePanelVisibility();
@@ -26,18 +38,20 @@ public:
 protected:
 
 	virtual void NativePreConstruct() override;
-	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
 
 protected:
 
-	/** Data Table reference */
-	UPROPERTY(EditDefaultsOnly, Category = Data)
-	TSoftObjectPtr<UDataTable> PlayerOnlineStatusDataSource;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* ClosePanelButton;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UPlayerListPanel* OnlinePlayerListPanel;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UPlayerListPanel* OfflinePlayerListPanel;
 
 private:
-
-	/** Fills in the Player List widgets with the data obtained from the Data Table */
-	void PopulatePlayerLists();
 
 	/** Opens the panel and configures the correct interaction mode */
 	void OpenPanel();
@@ -46,15 +60,5 @@ private:
 	UFUNCTION()
 	void ClosePanel();
 
-private:
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* ClosePanelButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UPlayerListPanel* OnlinePlayerListPanel;
-
-	UPROPERTY(meta = (BindWidget))
-	UPlayerListPanel* OfflinePlayerListPanel;
 	
 };

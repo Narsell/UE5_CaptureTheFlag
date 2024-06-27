@@ -17,12 +17,12 @@ class CAPTURETHEFLAG_API UPlayerOnlineDataHolder : public UObject
 
 public:
 
-	void InitializeData(const FPlayerOnlineData* InPlayerOnlineData) { PlayerOnlineData = InPlayerOnlineData; }
+	void InitializeData(FPlayerOnlineData* InPlayerOnlineData) { PlayerOnlineData = InPlayerOnlineData; }
 
-	const FPlayerOnlineData* GetData() const { return PlayerOnlineData; }
+	FPlayerOnlineData* GetData() const { return PlayerOnlineData; }
 
 private:
 
-	const FPlayerOnlineData* PlayerOnlineData;
-	
+	FPlayerOnlineData* PlayerOnlineData;
+
 };

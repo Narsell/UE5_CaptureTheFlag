@@ -8,6 +8,7 @@
 #include "MatchViewModel.generated.h"
 
 class ACTFGameMode;
+class ACTFHud;
 /**
  *
  */
@@ -19,7 +20,7 @@ class CAPTURETHEFLAG_API UMatchViewModel : public UMVVMViewModelBase
 public:
 
 	/** Sets the initial state on the view based on the initial model state */
-	void Initialize(ACTFGameMode* InGameMode, ACTFGameState* InGameState);
+	void Initialize(const ACTFHud* Hud);
 
 	UFUNCTION(BlueprintPure, FieldNotify)
 	FText GetTeamAName() const { return FText::FromName(TeamA.Name); }
@@ -48,6 +49,7 @@ public:
 	void SetTeam(const ETeamId TeamId, const FTeam& NewTeam);
 	void SetTeamColor(const ETeamId TeamId, const FColor& NewColor);
 	void SetTeamName(const ETeamId TeamId, const FName& NewName);
+	UFUNCTION()
 	void SetTeamScore(const ETeamId TeamId, int32 NewScore);
 	void SetMaxTeamScore(int32 NewMaxScore);
 	void SetMatchRemainingTime(float NewRemainingTime);

@@ -14,7 +14,6 @@
 #include "CTFPlayerState.h"
 #include "SpawnZone.h"
 #include "TeamBase.h"
-#include "PlayerViewModel.h"
 #include "StaminaComponent.h"
 #include "HealthComponent.h"
 
@@ -33,7 +32,6 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ACaptureTheFlagCharacter::ACaptureTheFlagCharacter()
 	:
-	PlayerViewModel(NewObject<UPlayerViewModel>()),
 	StaminaComponent(CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"))),
 	HealthComponent(CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"))),
 	FlagSocket(CreateDefaultSubobject<USceneComponent>(TEXT("FlagSocket"))),
@@ -91,19 +89,6 @@ void ACaptureTheFlagCharacter::BeginPlay()
 
 	//Sets the player mesh to reflect the assigned team ID colors
 	SetTeamColors();
-
-	InitializeViewModel();
-}
-
-void ACaptureTheFlagCharacter::InitializeViewModel()
-{
-	if (!PlayerViewModel)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Player viewmodel failed at creation."));
-		return;
-	}
-
-	PlayerViewModel->Initialize(this);
 }
 
 void ACaptureTheFlagCharacter::SetSlowMovementSpeed(const bool ReduceMovementSpeed)

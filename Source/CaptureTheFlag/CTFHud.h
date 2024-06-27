@@ -10,6 +10,10 @@
 class UPlayerHud;
 class UOnlineStatusPanel;
 class UPlayerEntryTooltip;
+class UPlayerViewModel;
+class UMatchViewModel;
+class UOnlineStatusViewModel;
+
 /**
  * 
  */
@@ -27,15 +31,20 @@ public:
 	/** Returns the pointer to the PlayerEntryTooltip widget */
 	UPlayerEntryTooltip* GetPlayerEntryTooltipWidget() const { return PlayerEntryTooltip; }
 
+	/** Returns the pointer to the OnlineStatusPanel widget */
+	UOnlineStatusPanel* GetOnlineStatusPanelWidget() const { return OnlineStatusPanel; }
+
 	/** Toggles the visibility of the Online Status Panel widget, from visible to hidden and back */
 	void ToggleOnlineStatusPanelVisibility();
 
 private:
 
-	/** Sets the necessary view-models onto the player hud widget */
-	void SetPlayerHudViewModels();
+	/** Initializes and sets the viewmodels to their respective widgets */
+	void InitializeViewModels();
 
 private:
+
+	/** WIDGET CLASSES */
 
 	/** Player UMG widget HUD class */
 	UPROPERTY(EditDefaultsOnly, Category = Widget)
@@ -49,9 +58,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Widget)
 	TSubclassOf<UPlayerEntryTooltip> PlayerEntryTooltipClass;
 
-	/** Initial visibility state of the Online Status panel widget */
-	UPROPERTY(EditDefaultsOnly, Category = Widget)
-	ESlateVisibility OnlineStatusInitialState = ESlateVisibility::Hidden;
+	/** REFERENCES */
 
 	/** Pointer to Player HUD widget */
 	UPROPERTY()
@@ -67,4 +74,20 @@ private:
 
 	/** Pointer to owning Player Controller */
 	APlayerController* PlayerController = nullptr;
+
+	/** VIEWMODELS */
+
+	UPROPERTY()
+	UPlayerViewModel* PlayerViewModel;
+	UPROPERTY()
+	UMatchViewModel* MatchViewModel;
+	UPROPERTY()
+	UOnlineStatusViewModel* OnlineStatusViewModel;
+
+	/** GENERAL SETTINGS */
+
+	/** Initial visibility state of the Online Status panel widget */
+	UPROPERTY(EditDefaultsOnly, Category = Widget)
+	ESlateVisibility OnlineStatusInitialState = ESlateVisibility::Hidden;
+
 };

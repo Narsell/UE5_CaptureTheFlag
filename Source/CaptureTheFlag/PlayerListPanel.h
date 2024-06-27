@@ -30,6 +30,9 @@ public:
 	/** Adds a player entry to this panel's list view */
 	void AddPlayerEntry(UObject* Data);
 
+	/** Remove a player entry from this panel's list view */
+	void RemovePlayerEntry(UObject* Data);
+
 	/** Updates the panel type and forces an update via NativePreConstruct */
 	void SetPanelType(EPlayerListPanelType NewPanelType);
 
@@ -64,16 +67,27 @@ private:
 	UFUNCTION()
 	void ToggleListViewCollapse();
 
+	/** Updates the PlayerListCountLabel with the given amount */
+	void UpdatePlayerListCountLabel();
+
 private:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* SectionTitleLabel;
 
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* PlayerListCountLabel;
+
+	UPROPERTY(meta = (BindWidget))
 	UButton* CollapseButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UListView* PlayerListView;
+
+	UPROPERTY()
+	TArray<UObject*> DataObjectList;
+
+	int32 PlayerListCount = 0;
 
 
 };

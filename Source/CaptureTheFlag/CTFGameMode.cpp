@@ -3,11 +3,8 @@
 #include "CTFGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
-#include "MatchViewModel.h"
 
 ACTFGameMode::ACTFGameMode()
-	:
-	MatchViewModel(NewObject<UMatchViewModel>())
 {
 }
 
@@ -19,18 +16,6 @@ void ACTFGameMode::BeginPlay()
 
 	GetWorldTimerManager().SetTimer(MatchTimerHandle, this, &ACTFGameMode::MatchTimerEnd, MatchTimeSeconds, false);
 
-	InitializeViewModel();
-
-}
-
-void ACTFGameMode::InitializeViewModel()
-{
-	if (!MatchViewModel)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Match viewmodel failed at creation."));
-		return;
-	}
-	MatchViewModel->Initialize(this, GameState);
 }
 
 void ACTFGameMode::MatchTimerEnd()
@@ -84,10 +69,7 @@ void ACTFGameMode::OnTeamScored(const ETeamId& TeamId)
 		const int32 NewScore = GameState->AddScoreToTeam(TeamId);
 
 		// Update view model
-		if (MatchViewModel)
-		{
-			MatchViewModel->SetTeamScore(TeamId, NewScore);
-		}
+		TeamScoreDelegate.Broadcast(TeamId, NewScore);
 
 		// If team scored while on extra time
 		if (bHasExtraTimeHappened)

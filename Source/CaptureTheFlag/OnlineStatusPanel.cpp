@@ -3,50 +3,57 @@
 
 #include "OnlineStatusPanel.h"
 #include "PlayerListPanel.h"
-#include "PlayerOnlineData.h"
 #include "PlayerOnlineDataHolder.h"
 #include "Components/Button.h"
+#include "OnlineStatusViewModel.h"
 
 void UOnlineStatusPanel::NativePreConstruct()
 {
+	Super::NativePreConstruct();
+
 	OnlinePlayerListPanel->SetPanelType(EPlayerListPanelType::ONLINE);
 	OfflinePlayerListPanel->SetPanelType(EPlayerListPanelType::OFFLINE);
 }
 
-void UOnlineStatusPanel::NativeConstruct()
+void UOnlineStatusPanel::NativeOnInitialized()
 {
-	PopulatePlayerLists();
+	Super::NativeOnInitialized();
 
 	ClosePanelButton->OnClicked.AddDynamic(this, &UOnlineStatusPanel::ClosePanel);
 }
 
-void UOnlineStatusPanel::PopulatePlayerLists()
+void UOnlineStatusPanel::UpdatePlayerStatus(UPlayerOnlineDataHolder* PlayerDataObject)
 {
-	FString Context;
-	TArray<FPlayerOnlineData*> PlayerStatusList;
-
-	if (!PlayerOnlineStatusDataSource) return;
-
-	PlayerOnlineStatusDataSource->GetAllRows<FPlayerOnlineData>(Context, PlayerStatusList);
-	for (const FPlayerOnlineData* PlayerStatus : PlayerStatusList)
+	if (PlayerDataObject->GetData()->IsOnline)
 	{
-		UPlayerOnlineDataHolder* DataHolder = NewObject<UPlayerOnlineDataHolder>();
-		DataHolder->InitializeData(PlayerStatus);
+		OfflinePlayerListPanel->RemovePlayerEntry(PlayerDataObject);
+		OnlinePlayerListPanel->AddPlayerEntry(PlayerDataObject);
+	}
+	else
+	{
+		OnlinePlayerListPanel->RemovePlayerEntry(PlayerDataObject);
+		OfflinePlayerListPanel->AddPlayerEntry(PlayerDataObject);
+	}
+}
 
-		if (PlayerStatus->IsOnline)
+void UOnlineStatusPanel::InitializePlayerList(const TArray<UPlayerOnlineDataHolder*>& PlayerObjectDataList)
+{
+
+	for (UPlayerOnlineDataHolder* PlayerDataObject : PlayerObjectDataList)
+	{
+		if (PlayerDataObject->GetData()->IsOnline)
 		{
-			OnlinePlayerListPanel->AddPlayerEntry(DataHolder);
+			OnlinePlayerListPanel->AddPlayerEntry(PlayerDataObject);
 		}
 		else
 		{
-			OfflinePlayerListPanel->AddPlayerEntry(DataHolder);
+			OfflinePlayerListPanel->AddPlayerEntry(PlayerDataObject);
 		}
 	}
 }
 
 void UOnlineStatusPanel::OpenPanel()
 {
-
 	FInputModeGameAndUI InputGameAndUIMode;
 	GetOwningPlayer()->SetInputMode(InputGameAndUIMode);
 	GetOwningPlayer()->SetShowMouseCursor(true);
