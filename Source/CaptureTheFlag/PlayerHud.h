@@ -12,8 +12,10 @@ class UMatchViewModel;
 class UPlayerViewModel;
 class ACTFPlayerState;
 class ACTFGameMode;
-class UProgressBar;
+class UCTFProgressBar;
 class UTextBlock;
+class UPlayerOnlineDataHolder;
+class UPlayerNotificationToast;
 
 /**
  * 
@@ -24,6 +26,9 @@ class CAPTURETHEFLAG_API UPlayerHud : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	/** Displays the friend notification toast with the information given in the player online data object */
+	void OnFriendStatusNotification(UPlayerOnlineDataHolder* PlayerOnlineObject);
 
 	/** Blueprint event that gets fired when the match view-model is ready to be set into the widget */
 	UFUNCTION(BlueprintImplementableEvent, Category=Viewmodel)
@@ -38,26 +43,26 @@ public:
 protected:
 
 	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
 
 protected:
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UProgressBar* HealthBar;
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* InPlayerToastAnimation;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* OutPlayerToastAnimation;
+
+protected:
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	UPlayerNotificationToast* PlayerNotificationToast;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* CurrentHealthLabel;
+	UCTFProgressBar* HealthBar;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* MaxHealthLabel;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UProgressBar* StaminaBar;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* CurrentStaminaLabel;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UTextBlock* MaxStaminaLabel;
+	UCTFProgressBar* StaminaBar;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamANameLabel;
@@ -91,6 +96,8 @@ private:
 	/** Updates the teams max score labels on the HUD with the current names set on the Game State */
 	void UpdateTeamMaxScores();
 
+	UFUNCTION()
+	void OnInToastAnimationFinished();
 
 private:
 

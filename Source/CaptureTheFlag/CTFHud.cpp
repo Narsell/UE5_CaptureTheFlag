@@ -15,6 +15,8 @@ void ACTFHud::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetActorTickEnabled(false);
+
 	if (!PlayerHudClass || !OnlineStatusPanelClass || !PlayerEntryTooltipClass)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Widget classes have not been set in the player controller blueprint"))
@@ -41,11 +43,6 @@ void ACTFHud::BeginPlay()
 
 	InitializeViewModels();
 
-}
-
-void ACTFHud::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void ACTFHud::ToggleOnlineStatusPanelVisibility()

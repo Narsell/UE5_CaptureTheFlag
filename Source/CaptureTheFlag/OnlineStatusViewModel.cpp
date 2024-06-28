@@ -7,6 +7,7 @@
 #include "OnlineStatusPanel.h"
 #include "OnlinePlayerService.h"
 #include "CTFHud.h"
+#include "PlayerHud.h"
 
 UOnlineStatusViewModel::UOnlineStatusViewModel()
 	:
@@ -25,20 +26,35 @@ void UOnlineStatusViewModel::Initialize(const ACTFHud* Hud)
 	}
 
 	// Setting widget reference (view)
+	PlayerHudWidget = Hud->GetPlayerHudWidget();
 	OnlineStatusPanelWidget = Hud->GetOnlineStatusPanelWidget();
+
 	if (OnlineStatusPanelWidget)
 	{
 		OnlineStatusPanelWidget->InitializePlayerList(PlayerDataObjectList);
 	}
 
-	TotalPlayers = PlayerDataObjectList.Num();
-	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetTotalPlayers);
+	SetTotalPlayers();
 }
 
 void UOnlineStatusViewModel::OnPlayerStatusChange(UPlayerOnlineDataHolder* PlayerOnlineObject)
 {
-	if (PlayerOnlineObject)
+	if (!PlayerOnlineObject)
 	{
-		OnlineStatusPanelWidget->UpdatePlayerStatus(PlayerOnlineObject);
+		return;
 	}
+	if (OnlineStatusPanelWidget)
+	{
+		OnlineStatusPanelWidget->OnPlayerStatusChange(PlayerOnlineObject);
+	}
+	if (PlayerHudWidget)
+	{
+		PlayerHudWidget->OnFriendStatusNotification(PlayerOnlineObject);
+	}
+}
+
+void UOnlineStatusViewModel::SetTotalPlayers()
+{
+	TotalPlayers = PlayerDataObjectList.Num();
+	UE_MVVM_BROADCAST_FIELD_VALUE_CHANGED(GetTotalPlayers);
 }

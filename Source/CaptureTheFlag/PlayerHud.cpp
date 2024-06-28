@@ -5,8 +5,11 @@
 #include "CTFGameMode.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Animation/WidgetAnimation.h"
 #include "Kismet/GameplayStatics.h" 
 #include "CaptureTheFlagCharacter.h"
+#include "PlayerNotificationToast.h"
+#include "PlayerOnlineDataHolder.h"
 
 
 void UPlayerHud::NativeConstruct()
@@ -15,10 +18,37 @@ void UPlayerHud::NativeConstruct()
 	
 }
 
+void UPlayerHud::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	FWidgetAnimationDynamicEvent InToastAnimationFinishDelegate;
+	InToastAnimationFinishDelegate.BindUFunction(this, FName("OnInToastAnimationFinished"));
+	BindToAnimationFinished(InPlayerToastAnimation, InToastAnimationFinishDelegate);
+}
+
 void UPlayerHud::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+}
 
+void UPlayerHud::OnFriendStatusNotification(UPlayerOnlineDataHolder* PlayerOnlineObject)
+{
+	if (PlayerOnlineObject && PlayerOnlineObject->GetData())
+	{
+		PlayerNotificationToast->InitializeWithData(*PlayerOnlineObject->GetData());
+		PlayAnimation(InPlayerToastAnimation);
+	}
+}
+
+void UPlayerHud::OnInToastAnimationFinished()
+{
+	FTimerHandle ToastHandle;
+	GetWorld()->GetTimerManager().SetTimer(ToastHandle, FTimerDelegate::CreateLambda(
+		[this] {
+		PlayAnimation(OutPlayerToastAnimation);
+		}
+	), PlayerNotificationToast->GetDisplayTime(), false);
 }
 
 void UPlayerHud::UpdateTeamNames()
@@ -53,3 +83,4 @@ void UPlayerHud::UpdateTeamMaxScores()
 	TeamAMaxScoreLabel->SetText(FText::AsNumber(ScoreToWin));
 	TeamBMaxScoreLabel->SetText(FText::AsNumber(ScoreToWin));
 }
+

@@ -31,14 +31,9 @@ void UOnlinePlayerService::StartService(UWorld* World)
 
 	if (World)
 	{
-		World->GetTimerManager().SetTimer(RandomChangeStatusHandle, this, &UOnlinePlayerService::ChangeRandomPlayerStatus, 2.f, true);
+		World->GetTimerManager().SetTimer(RandomChangeStatusHandle, this, &UOnlinePlayerService::ChangeRandomPlayerStatus, 5.f, true);
 	}
 
-}
-
-UOnlinePlayerService::~UOnlinePlayerService()
-{
-	UE_LOG(LogTemp, Error, TEXT("Destroying online service"))
 }
 
 const TArray<UPlayerOnlineDataHolder*>& UOnlinePlayerService::GetPlayerList()

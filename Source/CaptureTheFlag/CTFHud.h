@@ -26,7 +26,8 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
+	/** Returns the pointer to the PlayerHud widget */
+	UPlayerHud* GetPlayerHudWidget() const { return PlayerHud; }
 
 	/** Returns the pointer to the PlayerEntryTooltip widget */
 	UPlayerEntryTooltip* GetPlayerEntryTooltipWidget() const { return PlayerEntryTooltip; }

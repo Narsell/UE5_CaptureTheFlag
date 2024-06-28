@@ -20,8 +20,6 @@ class CAPTURETHEFLAG_API UOnlinePlayerService : public UObject
 
 public:
 
-	~UOnlinePlayerService();
-
 	FOnPlayerStatusChangeSignature PlayerStatusChangeDelegate;
 
 	/** Loads data into the service */
@@ -35,7 +33,6 @@ public:
 	int32 GetOfflinePlayers() const { return PlayerDataObjectList.Num() - OnlinePlayers; }
 
 private:
-
 
 	/** Changes the status from a random player data object and broadcasts the change */
 	void ChangeRandomPlayerStatus();

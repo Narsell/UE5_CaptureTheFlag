@@ -22,7 +22,7 @@ void UOnlineStatusPanel::NativeOnInitialized()
 	ClosePanelButton->OnClicked.AddDynamic(this, &UOnlineStatusPanel::ClosePanel);
 }
 
-void UOnlineStatusPanel::UpdatePlayerStatus(UPlayerOnlineDataHolder* PlayerDataObject)
+void UOnlineStatusPanel::OnPlayerStatusChange(UPlayerOnlineDataHolder* PlayerDataObject)
 {
 	if (PlayerDataObject->GetData()->IsOnline)
 	{

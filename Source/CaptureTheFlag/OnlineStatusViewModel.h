@@ -10,6 +10,7 @@ class UPlayerOnlineDataHolder;
 class UOnlinePlayerService;
 class UOnlineStatusPanel;
 class ACTFHud;
+class UPlayerHud;
 
 /**
  * 
@@ -33,6 +34,10 @@ public:
 	FText GetTotalPlayers() const { return FText::AsNumber(TotalPlayers); }
 
 private:
+
+	void SetTotalPlayers();
+
+private:
 	
 	int32 TotalPlayers;
 
@@ -45,5 +50,7 @@ private:
 	/** Pointer to Online Status Widget (view) */
 	UOnlineStatusPanel* OnlineStatusPanelWidget = nullptr;
 
+	/** Pointer to Player HUD Widget (view) */
+	UPlayerHud* PlayerHudWidget = nullptr;
 
 };

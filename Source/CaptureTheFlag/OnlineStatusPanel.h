@@ -22,18 +22,18 @@ class CAPTURETHEFLAG_API UOnlineStatusPanel : public UUserWidget
 
 public:
 
-	/** Blueprint event that gets fired when the online status view-model is ready to be set into the widget */
-	UFUNCTION(BlueprintImplementableEvent, Category = Viewmodel)
-	void SetOnlineStatusViewModelObject(const UOnlineStatusViewModel* InOnlineStatusViewModel);
-
 	/** Updates a player online status (changes its list view parent widget) */
-	void UpdatePlayerStatus(UPlayerOnlineDataHolder* PlayerDataObject);
+	void OnPlayerStatusChange(UPlayerOnlineDataHolder* PlayerDataObject);
 
 	/** Fills in the Player List widgets with the data obtained from the Data Table */
 	void InitializePlayerList(const TArray<UPlayerOnlineDataHolder*>& PlayerObjectDataList);
 
 	/** Toggles the panel visibility and configures the correct interaction mode */
 	void TogglePanelVisibility();
+
+	/** Blueprint event that gets fired when the online status view-model is ready to be set into the widget */
+	UFUNCTION(BlueprintImplementableEvent, Category = Viewmodel)
+	void SetOnlineStatusViewModelObject(const UOnlineStatusViewModel* InOnlineStatusViewModel);
 
 protected:
 
