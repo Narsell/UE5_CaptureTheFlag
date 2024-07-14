@@ -10,22 +10,11 @@ ASpawnZone::ASpawnZone()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	EditorLocationSprite = CreateEditorOnlyDefaultSubobject<UBillboardComponent>(TEXT("LocationSprite"));
-	EditorTextRenderName = CreateEditorOnlyDefaultSubobject<UTextRenderComponent>(TEXT("DisplayName"));
-	EditorForwardArrow = CreateEditorOnlyDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
+#if WITH_EDITOR
 
-	EditorLocationSprite->bHiddenInGame = true;
-	SetRootComponent(EditorLocationSprite);
+	CreateEditorOnlyComponents();
 
-	EditorTextRenderName->SetupAttachment(RootComponent);
-	EditorTextRenderName->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
-	EditorTextRenderName->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
-	EditorTextRenderName->SetRelativeLocation(FVector(0.f, 0.f, 60.f));
-	EditorTextRenderName->SetWorldSize(20.f);
-	EditorTextRenderName->bHiddenInGame = true;
-
-	EditorForwardArrow->SetupAttachment(RootComponent);
-	EditorForwardArrow->ArrowColor = FColor(149, 199, 254);
+#endif
 
 }
 
@@ -46,6 +35,8 @@ void ASpawnZone::BeginPlay()
 
 }
 
+#if WITH_EDITOR
+
 void ASpawnZone::UpdateEditorValues()
 {
 	if (EditorCustomName.Len() > 0) {
@@ -60,3 +51,31 @@ void ASpawnZone::UpdateEditorValues()
 	}
 }
 
+void ASpawnZone::CreateEditorOnlyComponents()
+{
+	EditorLocationSprite = CreateEditorOnlyDefaultSubobject<UBillboardComponent>(TEXT("LocationSprite"));
+	EditorTextRenderName = CreateEditorOnlyDefaultSubobject<UTextRenderComponent>(TEXT("DisplayName"));
+	EditorForwardArrow = CreateEditorOnlyDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
+
+	if (EditorLocationSprite)
+	{
+		EditorLocationSprite->bHiddenInGame = true;
+		SetRootComponent(EditorLocationSprite);
+	}
+	if (EditorTextRenderName)
+	{
+		EditorTextRenderName->SetupAttachment(RootComponent);
+		EditorTextRenderName->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+		EditorTextRenderName->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+		EditorTextRenderName->SetRelativeLocation(FVector(0.f, 0.f, 60.f));
+		EditorTextRenderName->SetWorldSize(20.f);
+		EditorTextRenderName->bHiddenInGame = true;
+	}
+	if (EditorForwardArrow)
+	{
+		EditorForwardArrow->SetupAttachment(RootComponent);
+		EditorForwardArrow->ArrowColor = FColor(149, 199, 254);
+	}
+}
+
+#endif

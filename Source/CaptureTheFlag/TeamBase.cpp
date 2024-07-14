@@ -27,7 +27,10 @@ ATeamBase::ATeamBase()
 
 void ATeamBase::BeginPlay()
 {
+#if WITH_EDITOR
 	GetSpriteComponent()->SetVisibility(false);
+#endif
+
 	GameMode = Cast<ACTFGameMode>(UGameplayStatics::GetGameMode(this));
 
 }

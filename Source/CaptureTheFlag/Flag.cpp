@@ -50,7 +50,9 @@ void AFlag::BeginPlay()
 {
 	Super::BeginPlay();
 
+#if WITH_EDITOR
 	GetSpriteComponent()->SetVisibility(false);
+#endif
 
 	SetTeamColors();
 }

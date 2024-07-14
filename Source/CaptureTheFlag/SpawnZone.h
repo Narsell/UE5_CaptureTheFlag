@@ -9,7 +9,7 @@
 class UTextRenderComponent;
 class UArrowComponent;
 class ATeamBase;
-
+class UBillboardComponent;
 
 
 UCLASS(Abstract)
@@ -31,14 +31,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	/**
-	 * Updates multiple variables relevant to be displayed while in-editor, useful for designers.
-	 * Variables updated: Actor class/custom editor name to render, Team base owner reference.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void UpdateEditorValues();
-
 private:
+
 
 	/** Object reference to the team base that owns this spawner */
 	UPROPERTY(VisibleInstanceOnly, Category=Setup)
@@ -48,14 +42,23 @@ private:
 	UPROPERTY(EditAnywhere, Category=Setup)
 	TSubclassOf<AActor> SpawnClass;
 
-	/** A sprite used to get in-editor visibility on the spawn point */
-	UPROPERTY(EditDefaultsOnly, Category=Visibility)
-	UBillboardComponent* EditorLocationSprite;
+#if WITH_EDITOR
+	/**
+	 * Updates multiple variables relevant to be displayed while in-editor, useful for designers.
+	 * Variables updated: Actor class/custom editor name to render, Team base owner reference.
+	 */
+	UFUNCTION(BlueprintCallable, meta=(AllowPrivateAccess))
+	void UpdateEditorValues();
 
-	/** A text render component to display the name of the object in-editor */
-	UPROPERTY(EditDefaultsOnly, Category=Visibility)
-	UTextRenderComponent* EditorTextRenderName;
+	/**
+	 * Creates the editor only subobjects that help make this object designer friendly.
+	 */
+	void CreateEditorOnlyComponents();
 
+#endif
+
+
+#if WITH_EDITORONLY_DATA
 	/** 
 	 * An optional custom name to display in editor, leave empty to display 
 	 * the class name set to spawn.
@@ -66,5 +69,15 @@ private:
 	/** Arrow ponting to the direction the actor will spawn in. (Forward vector) */
 	UPROPERTY(EditDefaultsOnly, Category=Visibility)
 	UArrowComponent* EditorForwardArrow;
+
+	/** A sprite used to get in-editor visibility on the spawn point */
+	UPROPERTY(EditDefaultsOnly, Category=Visibility)
+	UBillboardComponent* EditorLocationSprite;
+
+	/** A text render component to display the name of the object in-editor */
+	UPROPERTY(EditDefaultsOnly, Category=Visibility)
+	UTextRenderComponent* EditorTextRenderName;
+
+#endif
 
 };
