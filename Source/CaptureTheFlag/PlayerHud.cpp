@@ -25,18 +25,13 @@ void UPlayerHud::NativeOnInitialized()
 	FWidgetAnimationDynamicEvent InToastAnimationFinishDelegate;
 	InToastAnimationFinishDelegate.BindUFunction(this, FName("OnInToastAnimationFinished"));
 	BindToAnimationFinished(InPlayerToastAnimation, InToastAnimationFinishDelegate);
-}
-
-void UPlayerHud::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-}
+} 
 
 void UPlayerHud::OnFriendStatusNotification(UPlayerOnlineDataHolder* PlayerOnlineObject)
 {
-	if (PlayerOnlineObject && PlayerOnlineObject->GetData())
+	if (PlayerOnlineObject)
 	{
-		PlayerNotificationToast->InitializeWithData(*PlayerOnlineObject->GetData());
+		PlayerNotificationToast->InitializeWithData(PlayerOnlineObject->GetData());
 		PlayAnimation(InPlayerToastAnimation);
 	}
 }
@@ -46,7 +41,7 @@ void UPlayerHud::OnInToastAnimationFinished()
 	FTimerHandle ToastHandle;
 	GetWorld()->GetTimerManager().SetTimer(ToastHandle, FTimerDelegate::CreateLambda(
 		[this] {
-		PlayAnimation(OutPlayerToastAnimation);
+			PlayAnimation(OutPlayerToastAnimation);
 		}
 	), PlayerNotificationToast->GetDisplayTime(), false);
 }

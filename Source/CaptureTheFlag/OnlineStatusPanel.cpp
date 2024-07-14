@@ -24,7 +24,7 @@ void UOnlineStatusPanel::NativeOnInitialized()
 
 void UOnlineStatusPanel::OnPlayerStatusChange(UPlayerOnlineDataHolder* PlayerDataObject)
 {
-	if (PlayerDataObject->GetData()->IsOnline)
+	if (PlayerDataObject->GetData().IsOnline)
 	{
 		OfflinePlayerListPanel->RemovePlayerEntry(PlayerDataObject);
 		OnlinePlayerListPanel->AddPlayerEntry(PlayerDataObject);
@@ -41,7 +41,7 @@ void UOnlineStatusPanel::InitializePlayerList(const TArray<UPlayerOnlineDataHold
 
 	for (UPlayerOnlineDataHolder* PlayerDataObject : PlayerObjectDataList)
 	{
-		if (PlayerDataObject->GetData()->IsOnline)
+		if (PlayerDataObject->GetData().IsOnline)
 		{
 			OnlinePlayerListPanel->AddPlayerEntry(PlayerDataObject);
 		}

@@ -2,18 +2,18 @@
 
 #pragma once
 
-#include "PlayerOnlineData.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "PlayerNotificationToast.generated.h"
 
 class UTextBlock;
 class UImage;
+struct FPlayerOnlineData;
 
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, meta = (DisableNativeTick))
 class CAPTURETHEFLAG_API UPlayerNotificationToast : public UUserWidget
 {
 	GENERATED_BODY()

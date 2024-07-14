@@ -15,7 +15,7 @@ class UBorder;
  * Player Entry class meant to be used in a ListView.
  * InitializeWithData should be called OnListItemObjectSet event on child BP (From UserObjectListEntry interface)
  */
-UCLASS(Abstract)
+UCLASS(Abstract, meta = (DisableNativeTick))
 class CAPTURETHEFLAG_API UPlayerEntry : public UUserWidget
 {
 	GENERATED_BODY()
@@ -62,6 +62,6 @@ private:
 	FColor BorderNormalColor;
 
 	/** Pointer to player data corresponding to this player entry */
-	const FPlayerOnlineData* PlayerData;
+	FPlayerOnlineData PlayerData;
 
 };

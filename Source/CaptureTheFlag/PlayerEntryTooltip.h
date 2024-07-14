@@ -13,7 +13,7 @@ struct FPlayerOnlineData;
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, meta = (DisableNativeTick))
 class CAPTURETHEFLAG_API UPlayerEntryTooltip : public UUserWidget
 {
 	GENERATED_BODY()
@@ -21,7 +21,7 @@ class CAPTURETHEFLAG_API UPlayerEntryTooltip : public UUserWidget
 public:
 
 	/** Sets the player data onto this player's tooltip properties */
-	void SetPlayerData(const FPlayerOnlineData* PlayerData);
+	void SetPlayerData(const FPlayerOnlineData& PlayerData);
 
 private:
 

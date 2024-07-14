@@ -20,7 +20,7 @@ void UOnlinePlayerService::StartService(UWorld* World)
 
 	for (FPlayerOnlineData* PlayerData : PlayerDataList)
 	{
-		UPlayerOnlineDataHolder* PlayerDataObject = NewObject<UPlayerOnlineDataHolder>();
+		UPlayerOnlineDataHolder* PlayerDataObject = NewObject<UPlayerOnlineDataHolder>(this);
 		PlayerDataObject->InitializeData(PlayerData);
 		PlayerDataObjectList.Add(PlayerDataObject);
 		if (PlayerData->IsOnline)
@@ -44,10 +44,10 @@ const TArray<UPlayerOnlineDataHolder*>& UOnlinePlayerService::GetPlayerList()
 void UOnlinePlayerService::ChangeRandomPlayerStatus()
 {
 	int32 RandomIndex = FMath::Rand() % PlayerDataObjectList.Num();
-	FPlayerOnlineData* Data = PlayerDataObjectList[RandomIndex]->GetData();
-	Data->IsOnline = !Data->IsOnline;
+	FPlayerOnlineData& Data = PlayerDataObjectList[RandomIndex]->GetData();
+	Data.IsOnline = !Data.IsOnline;
 
-	OnlinePlayers = Data->IsOnline ? OnlinePlayers + 1 : OnlinePlayers - 1;
+	OnlinePlayers = Data.IsOnline ? OnlinePlayers + 1 : OnlinePlayers - 1;
 
 	PlayerStatusChangeDelegate.Broadcast(PlayerDataObjectList[RandomIndex]);
 

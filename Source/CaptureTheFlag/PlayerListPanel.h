@@ -20,7 +20,7 @@ class UListView;
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, meta = (DisableNativeTick))
 class CAPTURETHEFLAG_API UPlayerListPanel : public UUserWidget
 {
 	GENERATED_BODY()

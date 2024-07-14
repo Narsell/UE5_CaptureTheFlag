@@ -20,7 +20,7 @@ class UPlayerNotificationToast;
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, meta=(DisableNativeTick))
 class CAPTURETHEFLAG_API UPlayerHud : public UUserWidget
 {
 	GENERATED_BODY()
@@ -37,8 +37,6 @@ public:
 	/** Blueprint event that gets fired when the player view-model is ready to be set into the widget */
 	UFUNCTION(BlueprintImplementableEvent, Category=Viewmodel)
 	void SetPlayerViewModelObject(const UPlayerViewModel* InPlayerViewModel);
-
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 protected:
 

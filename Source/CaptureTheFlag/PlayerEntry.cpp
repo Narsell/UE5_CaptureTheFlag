@@ -27,12 +27,10 @@ void UPlayerEntry::InitializeWithData(UObject* InObject)
 
 	PlayerData = PlayerDataHolder->GetData();
 
-	if (PlayerData)
-	{
-		NicknameLabel->SetText(FText::FromName(PlayerData->Nickname));
-		LevelLabel->SetText(FText::AsNumber(PlayerData->Level));
-		IconImage->SetBrushFromSoftTexture(PlayerData->Icon);
-	}
+	NicknameLabel->SetText(FText::FromName(PlayerData.Nickname));
+	LevelLabel->SetText(FText::AsNumber(PlayerData.Level));
+	IconImage->SetBrushFromSoftTexture(PlayerData.Icon);
+	
 }
 
 void UPlayerEntry::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

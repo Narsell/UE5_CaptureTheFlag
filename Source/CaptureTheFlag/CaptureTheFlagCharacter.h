@@ -97,7 +97,7 @@ private:
 private:
 
 	/** Team ID this player belongs to */
-	UPROPERTY(VisibleInstanceOnly, Category = Team)
+	UPROPERTY(EditAnywhere, Category = Team)
 	ETeamId TeamId = ETeamId::B;
 
 	/** Maximum speed the player can reach while sprinting */

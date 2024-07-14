@@ -15,7 +15,7 @@ class UOnlineStatusViewModel;
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, meta = (DisableNativeTick))
 class CAPTURETHEFLAG_API UOnlineStatusPanel : public UUserWidget
 {
 	GENERATED_BODY()
@@ -45,10 +45,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* ClosePanelButton;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UPlayerListPanel* OnlinePlayerListPanel;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UPlayerListPanel* OfflinePlayerListPanel;
 
 private:
