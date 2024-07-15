@@ -45,7 +45,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = Health, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float StartingHealth = MaxHealth;
 
-	UPROPERTY(EditAnywhere, Category = Health, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditInstanceOnly, Category = Health, meta = (ClampMin = "0.0", UIMin = "0.0"), Transient)
 	float CurrentHealth = StartingHealth;
 
 	UPROPERTY(EditAnywhere, Category = Health, meta = (ClampMin = "0.0", UIMin = "0.0"))

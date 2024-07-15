@@ -48,7 +48,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = Stamina, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float StartingStamina = MaxStamina;
 
-	UPROPERTY(EditAnywhere, Category = Stamina, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditInstanceOnly, Category = Stamina, meta = (ClampMin = "0.0", UIMin = "0.0"), Transient)
 	float CurrentStamina = StartingStamina;
 
 	UPROPERTY(EditAnywhere, Category = Stamina, meta = (ClampMin = "0.0", UIMin = "0.0"))

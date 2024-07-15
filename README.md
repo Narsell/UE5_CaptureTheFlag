@@ -6,13 +6,13 @@ A Capture The Flag demo game made in Unreal Engine 5 in an effort to learn more 
 There are three main widgets (composed of many different user created widgets) each of them interacts with an appropriate MVVM viewmodel to update and display its data.
 
 * **Main HUD:** Displays player information (health and stamina) as well as match information such as the match remaining time and each team's name and current score.
-<br>![Main HUD](https://media.discordapp.net/attachments/862531972748673024/1261868790006808686/image.png?ex=66948663&is=669334e3&hm=e3c44e8080026f9c9b5bec283aa77bf0ce99194edeac19cc4c3ccbceefbebcdc&=&format=webp&quality=lossless&width=550&height=324)
+<br>![Main HUD](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDZncTQ5aTQyN3h1YXY0eTlkcWc5YjFqaHhyMTBxemltajNqaG1vNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BTpDM8QhLNpk69mYLC/giphy.gif)
 
 * **Friend List Menu:** Displays a list of online and offline players which is fetched from a CSV file, player entries on this list get updated in real-time as their online status changes. The state change is simulated through a mocked Player Online Service.
-<br>![Friend List Menu](https://media.discordapp.net/attachments/862531972748673024/1261869315079012392/UnrealEditor_PKuxNxSA24.gif?ex=669486e1&is=66933561&hm=fecf42c597a3e6595c89ef189b4572c93aa971d852c8fe5e1b4500116ec75ca1&=)
+<br>![Friend List Menu](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjIzanM2ODltdDFzZXBjd3NkNHZmem16aWQ3ZTZvdnNkeXR1MnE0OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Nd79irwaPEvDLrgK6l/giphy.gif)
 
 * **Friend Notification Toast:** When a friend's online status changes, a small pop-up notification window will notify of this change.
-<br>![Friend pop-up](https://media.discordapp.net/attachments/862531972748673024/1261870908075806801/UnrealEditor_bWLzTE5Bej.gif?ex=6694885c&is=669336dc&hm=9e95a5e14c6284209ea69a273536a2dfb75f4f7ef1144f46015f5f5dc07bddcb&=)
+<br>![Friend pop-up](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2IyOXF0ajd2anJmMGF5bnVpZzFveTkwaHgwOXdvdHZ6OGkyZG12bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tOaGLwoWA7QPvR3lvN/giphy.gif)
 
 ### High level gameplay features
 There are two teams that can be configured with different names and colors, you can then assign instances of ATeamBase, AFlag and, ACaptureTheFlagCharacter to one of these teams to change the way they interact with each other.
