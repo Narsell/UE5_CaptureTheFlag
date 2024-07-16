@@ -4,8 +4,8 @@ A Capture The Flag demo game made in Unreal Engine 5 in an effort to learn more 
 
 ---
 
-### High level design UI features
-There are three main widgets (composed of many different user created widgets) each of them interacts with an appropriate MVVM viewmodel to update and display its data.
+### High-level design UI features
+There are three main widgets (composed of many different user-created widgets) each of them interacts with an appropriate MVVM viewmodel to update and display its data.
 
 * **Main HUD:** Displays player information (health and stamina) as well as match information such as the match remaining time and each team's name and current score.
 <br>![Main HUD](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDZncTQ5aTQyN3h1YXY0eTlkcWc5YjFqaHhyMTBxemltajNqaG1vNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BTpDM8QhLNpk69mYLC/giphy.gif)
@@ -16,12 +16,12 @@ There are three main widgets (composed of many different user created widgets) e
 * **Friend Notification Toast:** When a friend's online status changes, a small pop-up notification window will notify of this change.
 <br>![Friend pop-up](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2IyOXF0ajd2anJmMGF5bnVpZzFveTkwaHgwOXdvdHZ6OGkyZG12bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tOaGLwoWA7QPvR3lvN/giphy.gif)
 ---
-### High level gameplay features
-There are two teams that can be configured with different names and colors, you can then assign instances of ATeamBase, AFlag and, ACaptureTheFlagCharacter to one of these teams to change the way they interact with each other.
+### High-level gameplay features
+There are two teams that can be configured with different names and colors, you can then assign instances of ATeamBase, AFlag, and ACaptureTheFlagCharacter to one of these teams to change the way they interact with each other.
  * A player on team A can only pick flags from team B.
  * A flag on team A can only be dropped on a base from team B.
 
-When the match time ends, the team with the most points will be the winner, however if there's a tie some additional time will be added, but a tie is still possible if both teams fail to score a point then.
+When the match time ends, the team with the most points will be the winner, however, if there's a tie some additional time will be added, but a tie is still possible if both teams fail to score a point then.
 
 ---
 ### Automation testing implementation
@@ -42,7 +42,7 @@ The underlying logic of the test case scenario is [implemented in a child of the
 * Others such as:
     * C++ Components.
     * Collision profiles, object types, etc...
-    * Editor only tools to facilitate gameplay design.
+    * Editor-only tools to facilitate gameplay design.
     * Timer Handles.
 
 ## Controls
