@@ -26,7 +26,7 @@ When the match time ends, the team with the most points will be the winner, howe
 ---
 ### Automation testing implementation
 
-This project uses Gauntlet and the UAT (Unreal Automation Tool) to implement automated tests. The automation project source code, which handles the execution command and configuration can be found [here](https://github.com/Narsell/UE5_GauntletAutomation).
+This project uses Gauntlet and the UAT (Unreal Automation Tool) to implement automated tests. The automation project source code, which handles the execution command and configuration can be found in the [Gauntlet Automation Project repository](https://github.com/Narsell/UE5_GauntletAutomation).
 
 The underlying logic of the test case scenario is [implemented in a child of the UGauntletTestController class](https://github.com/Narsell/UE5_CaptureTheFlag/tree/main/Source/CaptureTheFlag/AutomationTests) which allows the puppeteering of the state of the game to evaluate the desired outcome.
 
