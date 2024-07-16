@@ -12,12 +12,6 @@
 #include "PlayerOnlineDataHolder.h"
 
 
-void UPlayerHud::NativeConstruct()
-{
-	Super::NativeConstruct();
-	
-}
-
 void UPlayerHud::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -46,6 +40,8 @@ void UPlayerHud::OnInToastAnimationFinished()
 	), PlayerNotificationToast->GetDisplayTime(), false);
 }
 
+/* Disabling the update methods 
+ * 
 void UPlayerHud::UpdateTeamNames()
 {
 	if (!GameState) return;
@@ -78,4 +74,4 @@ void UPlayerHud::UpdateTeamMaxScores()
 	TeamAMaxScoreLabel->SetText(FText::AsNumber(ScoreToWin));
 	TeamBMaxScoreLabel->SetText(FText::AsNumber(ScoreToWin));
 }
-
+ */

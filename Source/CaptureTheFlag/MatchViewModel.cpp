@@ -16,7 +16,7 @@ void UMatchViewModel::Initialize(const ACTFHud* Hud)
 		SetMatchRemainingTime(GameMode->GetRemainingMatchTime());
 		SetMaxTeamScore(GameMode->GetRequiredScoreToWin());
 		GameMode->TeamScoreDelegate.AddDynamic(this, &UMatchViewModel::SetTeamScore);
-		GameMode->GetWorldTimerManager().SetTimer(MatchTimerUpdateHandle, this, &UMatchViewModel::OnUpdateMatchTimer, 1.f, true);
+		GameMode->GetWorldTimerManager().SetTimer(MatchTimerUpdateHandle, this, &UMatchViewModel::OnUpdateMatchTimer, 0.5f, true);
 	}
 	if (GameState)
 	{

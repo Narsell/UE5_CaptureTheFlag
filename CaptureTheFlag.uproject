@@ -13,7 +13,8 @@
 				"UMG",
 				"CoreUObject",
 				"ModelViewViewModel",
-				"SlateCore"
+				"SlateCore",
+				"Gauntlet"
 			]
 		}
 	],

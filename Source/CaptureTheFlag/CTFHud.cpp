@@ -17,9 +17,11 @@ void ACTFHud::BeginPlay()
 
 	SetActorTickEnabled(false);
 
+	const TCHAR* FunctionName = ANSI_TO_TCHAR(__FUNCTION__);
+
 	if (!PlayerHudClass || !OnlineStatusPanelClass || !PlayerEntryTooltipClass)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Widget classes have not been set in the player controller blueprint"))
+		UE_LOG(LogTemp, Error, TEXT("[%s] Widget classes have not been set in the map BP_HUD blueprint"), FunctionName)
 		return;
 	}
 

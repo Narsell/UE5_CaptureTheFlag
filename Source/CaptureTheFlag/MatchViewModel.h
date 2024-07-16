@@ -44,7 +44,7 @@ public:
 	FText GetMaxTeamScore() const { return FText::AsNumber(MaxTeamScore); }
 
 	UFUNCTION(BlueprintPure, FieldNotify)
-	FText GetMatchRemainingTime() const { return FText::AsNumber(MatchRemainingTime, &FloatFormatOptions); }
+	FText GetMatchRemainingTime() const { return FText::AsNumber(FMath::Clamp(MatchRemainingTime, 0, MatchRemainingTime), &FloatFormatOptions); }
 
 	void SetTeam(const ETeamId TeamId, const FTeam& NewTeam);
 	void SetTeamColor(const ETeamId TeamId, const FColor& NewColor);

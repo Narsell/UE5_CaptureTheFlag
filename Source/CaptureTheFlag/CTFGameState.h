@@ -18,6 +18,9 @@ struct FTeam {
 
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	ETeamId TeamId = ETeamId::NONE;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FName Name = "Team X";
 
@@ -28,7 +31,7 @@ struct FTeam {
 	FColor Color = FColor::Magenta;
 
 	bool operator==(const FTeam& Other) {
-		return Name == Other.Name && Score == Other.Score && Color == Other.Color;
+		return TeamId == Other.TeamId;
 	}
 };
 

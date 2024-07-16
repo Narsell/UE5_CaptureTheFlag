@@ -7,10 +7,11 @@
 #include "GameFramework/GameMode.h"
 #include "CTFGameMode.generated.h"
 
-class UMatchViewModel;
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamScoreSignature, ETeamId, TeamId, int32, NewScore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMatchEndSignature, ETeamId, TeamId);
 
+
+class UMatchViewModel;
 /**
  *
  */
@@ -26,11 +27,16 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnTeamScoreSignature TeamScoreDelegate;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnMatchEndSignature OnMatchEndDelegate;
+
 	/** Returns the required score to win */
 	int32 GetRequiredScoreToWin() const { return ScoreToWin; };
 
 	/** Returns the remainig seconds for the match to finish */
 	float GetRemainingMatchTime() const { return GetWorldTimerManager().GetTimerRemaining(MatchTimerHandle); }
+
+	const FTeam* GetWinnerTeam() const { return WinnerTeam; };
 
 	/**
 	 * Registers a score by the team given by the TeamId.
@@ -64,6 +70,8 @@ private:
 	bool bHasExtraTimeHappened = false;
 
 	ACTFGameState* GameState = nullptr;
+
+	const FTeam* WinnerTeam = nullptr;
 
 	FTimerHandle MatchTimerHandle;
 

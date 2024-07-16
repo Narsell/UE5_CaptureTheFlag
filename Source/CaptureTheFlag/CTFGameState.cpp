@@ -5,8 +5,8 @@
 
 ACTFGameState::ACTFGameState()
 	:
-	TeamA({"Team A", 0, FColor::Green}),
-	TeamB({"Team B", 0, FColor::Red})
+	TeamA({ETeamId::A, "Team A", 0, FColor::Green}),
+	TeamB({ETeamId::B, "Team B", 0, FColor::Red})
 {
 }
 

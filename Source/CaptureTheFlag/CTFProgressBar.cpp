@@ -8,8 +8,10 @@
 void UCTFProgressBar::NativePreConstruct()
 {
 	Super::NativePreConstruct();
-
-	ProgressBar->SetFillColorAndOpacity(FillColor);
+	if (ProgressBar)
+	{
+		ProgressBar->SetFillColorAndOpacity(FillColor);
+	}
 }
 
 void UCTFProgressBar::SetPercent(float InPercent)

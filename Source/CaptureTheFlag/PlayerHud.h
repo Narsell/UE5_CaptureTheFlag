@@ -35,15 +35,14 @@ public:
 	void SetMatchViewModelObject(const UMatchViewModel* InMatchViewModel);
 	
 	/** Blueprint event that gets fired when the player view-model is ready to be set into the widget */
-	UFUNCTION(BlueprintImplementableEvent, Category=Viewmodel)
+	UFUNCTION(BlueprintImplementableEvent, Category = Viewmodel)
 	void SetPlayerViewModelObject(const UPlayerViewModel* InPlayerViewModel);
 
 protected:
 
-	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 
-protected:
+public:
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* InPlayerToastAnimation;
@@ -51,15 +50,20 @@ protected:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* OutPlayerToastAnimation;
 
-protected:
-
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UPlayerNotificationToast* PlayerNotificationToast;
 
+	/* Disabling this BindWidget approach because its not compatible with UE's MVVM
+	 * This would work by simply subscribing to events on the viewmodel and updating
+	 * the widget's values here or calling update methods from the viewmodel.
+	 * Instead, this is being setup in the Editor, the viewmodel provides functions
+	 * that only get called when the respective value has changed, and we can then
+	 * bind the widgets to these functions (or properties)
+	 * 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCTFProgressBar* HealthBar;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrit, meta = (BindWidget))
 	UCTFProgressBar* StaminaBar;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -80,19 +84,21 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* TeamBMaxScoreLabel;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UPROPERTY(Transient, BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* MatchTimerLabel;
 
-private:
+	*/
 
-	/** Updates the team name labels on the HUD with the current names set on the Game State */
+private:
+	/* Disabling the update methods (this corresponds to the BindWidget approach explained
+	 * above.
+	 *
 	void UpdateTeamNames();
 
-	/** Updates a team's score label on the HUD with the NewScore provided */
 	void UpdateTeamScore(const ETeamId& TeamId);
 
-	/** Updates the teams max score labels on the HUD with the current names set on the Game State */
 	void UpdateTeamMaxScores();
+	*/
 
 	UFUNCTION()
 	void OnInToastAnimationFinished();
