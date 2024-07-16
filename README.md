@@ -2,6 +2,8 @@
 
 A Capture The Flag demo game made in Unreal Engine 5 in an effort to learn more about UE with a big focus on UI.
 
+---
+
 ### High level design UI features
 There are three main widgets (composed of many different user created widgets) each of them interacts with an appropriate MVVM viewmodel to update and display its data.
 
@@ -13,13 +15,22 @@ There are three main widgets (composed of many different user created widgets) e
 
 * **Friend Notification Toast:** When a friend's online status changes, a small pop-up notification window will notify of this change.
 <br>![Friend pop-up](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2IyOXF0ajd2anJmMGF5bnVpZzFveTkwaHgwOXdvdHZ6OGkyZG12bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tOaGLwoWA7QPvR3lvN/giphy.gif)
-
+---
 ### High level gameplay features
 There are two teams that can be configured with different names and colors, you can then assign instances of ATeamBase, AFlag and, ACaptureTheFlagCharacter to one of these teams to change the way they interact with each other.
  * A player on team A can only pick flags from team B.
  * A flag on team A can only be dropped on a base from team B.
 
 When the match time ends, the team with the most points will be the winner, however if there's a tie some additional time will be added, but a tie is still possible if both teams fail to score a point then.
+
+---
+### Automation testing implementation
+
+This project uses Gauntlet and the UAT (Unreal Automation Tool) to implement automated tests. The automation project source code, which handles the execution command and configuration can be found [here](https://github.com/Narsell/UE5_GauntletAutomation).
+
+The underlying logic of the test case scenario is [implemented in a child of the UGauntletTestController class](https://github.com/Narsell/UE5_CaptureTheFlag/tree/main/Source/CaptureTheFlag/AutomationTests) which allows the puppeteering of the state of the game to evaluate the desired outcome.
+
+---
 
 
 ## Concepts and/or features worked on this project so far:
