@@ -38,6 +38,7 @@ The underlying logic of the test case scenario is [implemented in a child of the
 * UMG Widgets with C++.
 * UMG Viewmodels using UE5's MVVM.
 * UE5's C++ delegates (Non-dynamic, Multicast, and Dynamic)
+* Unreal Automation Tool and Gauntlet for automated tests
 * Best practices in the use of the Unreal Engine Game Framework (Game State, Game Mode, Game Instance, Player State, etc...)
 * Others such as:
     * C++ Components.
